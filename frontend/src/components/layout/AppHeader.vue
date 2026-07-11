@@ -8,7 +8,7 @@
 
       <nav class="nav-desktop" aria-label="主导航">
         <router-link
-          v-for="item in navItems"
+          v-for="item in visibleNavItems"
           :key="item.path"
           :to="item.path"
           class="nav-link"
@@ -81,7 +81,7 @@
         <!-- 移动端顶部水墨装饰 -->
         <div class="mobile-ink-decoration" aria-hidden="true"></div>
         <router-link
-          v-for="item in navItems"
+          v-for="item in visibleNavItems"
           :key="item.path"
           :to="item.path"
           class="nav-link"
@@ -102,13 +102,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
   HomeFilled, Food, Collection, Calendar,
-  Guide, ChatRound, ChatDotRound, DataAnalysis, ArrowDown,
-  UserFilled, Close, Menu, VideoPlay, VideoPause,
+  Guide, ChatRound, ChatDotRound, DataAnalysis, Setting,
+  ArrowDown, UserFilled, Close, Menu, VideoPlay, VideoPause,
 } from '@element-plus/icons-vue'
 import SearchBar from '@/components/common/SearchBar.vue'
 import { useMusic } from '@/composables/useMusic'
@@ -130,7 +130,12 @@ const navItems = [
   { path: '/chat', label: 'AI对话', icon: ChatDotRound },
   { path: '/community', label: '社区', icon: ChatRound },
   { path: '/dashboard', label: '数据', icon: DataAnalysis },
+  { path: '/admin', label: '管理', icon: Setting, adminOnly: true },
 ]
+
+const visibleNavItems = computed(() =>
+  navItems.filter(item => !item.adminOnly || userStore.isAdmin)
+)
 
 const hotKeywords = ['牛肉火锅', '英歌舞', '工夫茶', '粿品', '生腌']
 

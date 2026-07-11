@@ -34,6 +34,7 @@ def _user_dict(user: User) -> dict:
         "avatar_url": user.avatar_url,
         "persona_type": user.persona_type,
         "role": user.role,
+        "is_admin": user.role == "admin",
     }
 
 
