@@ -1,0 +1,1 @@
+import{O as a}from"./index-C9byUCWe.js";const e={fast:1500,normal:2e3,slow:3e3},r={success(s){a({type:"success",message:s,duration:e.normal})},error(s){a({type:"error",message:s,duration:e.slow})},warning(s){a({type:"warning",message:s,duration:e.normal})},info(s){a({type:"info",message:s,duration:e.fast})}};export{r as t};

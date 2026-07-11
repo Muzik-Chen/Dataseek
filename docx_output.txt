@@ -1,0 +1,68 @@
+================================================================================
+FILE: 技术文档/技术选型初案.docx
+================================================================================
+
+--- Table 0 ---
+  Row0: 技术类别 | 选定技术 | 精确版本 | 确认日期 | 官方链接 | 选型理由
+  Row1: 前端框架 | Vue 3 | v3.5.38 | 2026-06-16 | https://cn.vuejs.org/about/releases | 用户指定 3.4 + 范围内最新稳定补丁版，Composition API 生态成熟，与 Nuxt 3.16 完全适配
+  Row2: 前端框架 | Nuxt 3 | v3.16.0 | 2026-06-16 | https://nuxt.com/blog/v3-16 | Vue 3 官方全栈元框架，支持 SSR/SSG/SPA 混合渲染，首屏加速与 SEO 能力符合文旅宣传站需求
+  Row3: 前端语言 | TypeScript | v5.9.3 | 2026-06-16 | https://www.typescriptlang.org/download | 5.x 分支最终稳定版，全项目类型覆盖，与 Vue 3、Nuxt 3 生态深度适配
+  Row4: 前端运行时 | Node.js | v20.18.0 LTS | 2026-06-16 | https://nodejs.org/en/blog/release/v20.18.0 | 20.x LTS 最终维护版，满足 Nuxt 3 最低版本要求；注：2026 年 4 月已 EOL，生产建议规划升级至 22 LTS
+  Row5: 前端 UI | Element Plus | v2.14.0 | 2026-06-16 | https://cn.element-plus.org/zh-CN/guide/changelog | Vue 3 生态最成熟企业级 UI 库，最新版修复了大量交互 bug，适配 Vue 3.5 + 特性
+  Row6: 数据可视化 | ECharts | v5.6.0 | 2026-06-16 | https://echarts.apache.org/zh/download.html | 5.x 分支最新稳定版，国内生态最完善，支撑文旅数据大屏、热力图、趋势图等场景
+  Row7: 状态管理 | Pinia | v2.3.0 | 2026-06-16 | https://pinia.vuejs.org/ | Vue 3 官方推荐状态管理方案，TypeScript 友好，模块化 Store 设计，与 Nuxt 3 无缝集成
+  Row8: 构建工具 | Vite | v5.4.11 | 2026-06-16 | https://vitejs.dev/releases | 5.x 分支最终稳定版，Nuxt 3 底层构建引擎，ESM 原生开发服务器，HMR 热更新性能优异
+  Row9: 包管理器 | pnpm | v9.15.5 | 2026-06-16 | https://pnpm.io/9.x/installation | 9.x 分支最新稳定版，支持 monorepo 架构，磁盘空间利用率高，依赖隔离严格
+  Row10: 后端语言 | Python | v3.12.7 | 2026-06-16 | https://www.python.org/downloads/release/python-3127/ | 用户指定固定版本，类型提示系统升级，解释器性能优化，全栈后端主语言
+  Row11: Web 框架 | FastAPI | v0.115.14 | 2026-06-16 | https://fastapi.tiangolo.com/release-notes/ | 用户指定 0.115.x 分支最新补丁版，异步优先架构，自动生成 OpenAPI 文档，原生集成 Pydantic v2
+  Row12: ORM 框架 | SQLAlchemy | v2.0.50 | 2026-06-16 | https://www.sqlalchemy.org/blog/2026/05/24/sqlalchemy-2.0.50-released/ | Python 生态最成熟 ORM 框架，2.0 版本原生支持 async 异步会话，与 FastAPI 异步生态完美契合
+  Row13: 数据库迁移 | Alembic | v1.18.4 | 2026-06-16 | https://alembic.sqlalchemy.org/en/latest/changelog.html | SQLAlchemy 官方迁移工具，支持自动生成迁移脚本，版本化管理数据库结构变更
+  Row14: MySQL 驱动 | asyncmy | v0.2.5 | 2026-06-16 | https://pypi.org/project/asyncmy/ | 专为 SQLAlchemy 2.0 异步优化的 MySQL 驱动，Cython 核心实现，性能优于 aiomysql，适配 MySQL 8.0
+  Row15: 缓存中间件 | Redis 服务端 | v7.2.14 | 2026-06-16 | https://github.com/redis/redis/releases/tag/7.2.14 | 7.2 分支最终维护版，同时承担分布式缓存、消息代理、会话存储功能；注：企业版已 EOL，生产可考虑升级 7.4
+  Row16: Redis 客户端 | redis-py (async) | v7.4.0 | 2026-06-16 | https://pypi.org/project/redis/ | Redis 官方 Python 异步客户端，支持全量 Redis 命令，与 FastAPI 异步架构兼容
+  Row17: 异步任务队列 | ARQ | v0.26.0 | 2026-06-16 | https://arq-docs.helpmanual.io/ | 轻量级 Python 原生异步任务队列，基于 Redis 实现，与 FastAPI 生态无缝集成，替代重型 Celery
+  Row18: 全文搜索 | Elasticsearch | v8.19.14 | 2026-06-16 | https://www.elastic.co/downloads/elasticsearch | 8.x 分支最新稳定版，BM25 关键词检索，与 Milvus 语义检索形成互补，支撑 POI / 美食 / 内容搜索
+  Row19: Agent 框架 | LangChain | v1.2.17 | 2026-06-16 | https://pypi.org/project/langchain/1.2.17/ | 用户指定固定版本，Agent/Chain/Tool 全能力框架，1.x LTS 版本语义化兼容，无破坏性变更
+  Row20: Agent 编排 | LangGraph | v1.2.4 | 2026-06-16 | https://pypi.org/project/langgraph/1.2.4/ | 用户指定固定版本，状态图式 Agent 工作流编排，与 LangChain 1.x 完全兼容，支持复杂多轮对话逻辑
+  Row21: LLM 推理引擎 | vLLM | v0.22.1 | 2026-06-16 | https://pypi.org/project/vllm/0.22.1/ | 高吞吐 LLM 推理引擎，Continuous Batching + PagedAttention 技术，大幅提升模型服务并发能力
+  Row22: 嵌入模型 | BGE-M3 | v1.0 | 2026-06-16 | https://huggingface.co/BAAI/bge-m3 | BAAI 开源多语言嵌入模型，中文语义检索 SOTA，支持稠密 + 稀疏混合检索，适配 Milvus 向量库
+  Row23: 深度学习框架 | PyTorch | v2.12.0 | 2026-06-16 | https://pytorch.org/get-started/locally/ | 2.x 分支最新稳定版，官方支持 Python 3.12，社区最活跃的深度学习框架，支撑推荐模型与 LLM 微调
+  Row24: 向量数据库 | Milvus | v2.4.23 | 2026-06-16 | https://milvus.io/docs/v2.4.x/release_notes.md | 2.4.x 分支最新稳定版，生产级向量数据库，支持混合搜索与 GPU 索引加速，Python SDK 完善
+  Row25: 图数据库 | Neo4j | v5.24.0 | 2026-06-16 | https://neo4j.com/download/ | 5.x 分支最新稳定版，图路径召回与文化关联链查询能力突出，支撑潮汕文化知识图谱推荐
+  Row26: 关系型数据库 | MySQL | v8.0.46 | 2026-06-16 | https://dev.mysql.com/downloads/mysql/8.0.html | 用户指定 8.0 + 范围内最终维护版，InnoDB 引擎，支持 utf8mb4 字符集；注：2026 年 4 月已 EOL，后续建议升级 8.4 LTS
+  Row27: 文档数据库 | MongoDB | v7.0.35 | 2026-06-16 | https://www.mongodb.com/docs/v7.0/release-notes/7.0/ | 7.x 分支最新稳定版，Schema-less 设计，适配非结构化的行为日志、AI 对话记录、内容详情存储
+  Row28: 时序数据库 | TDengine | v3.4.0.0 | 2026-06-16 | https://www.taosdata.com/download | 3.x 分支最新稳定版，国产开源时序数据库，针对人流、气象、监控指标等时序数据聚合优化
+  Row29: OLAP 数据库 | ClickHouse | v26.4.2.10-stable | 2026-06-16 | https://clickhouse.com/docs/en/whats-new/changelog | 列式存储 OLAP 数据库，运营报表与用户行为分析性能优异，支持海量数据即席查询
+  Row30: 对象存储 | MinIO | RELEASE.2026-05-15T00-00-00Z | 2026-06-16 | https://min.io/download | S3 协议兼容的自托管对象存储，Docker 一键部署，适配开发 / 测试环境图片与静态资源存储
+  Row31: 容器运行时 | Docker | v27.3.1 | 2026-06-16 | https://www.docker.com/get-started/ | 行业标准容器运行时，实现开发 / 测试 / 生产环境一致性，支撑本地依赖编排与生产部署
+  Row32: 容器编排 | Kubernetes | v1.30.11 | 2026-06-16 | https://kubernetes.io/releases/patch-releases/ | 用户指定 1.30 + 范围内最终补丁版，行业标准容器编排平台；注：已超出上游社区支持周期，生产建议升级 1.32+
+  Row33: K8s 包管理 | Helm Charts | v3.16.0 | 2026-06-16 | https://helm.sh/docs/intro/release_notes/ | Kubernetes 官方包管理工具，模板化部署配置，通过 values.yaml 实现多环境配置隔离
+  Row34: 监控指标 | Prometheus | v2.53.0 | 2026-06-16 | https://prometheus.io/download/ | 云原生标准监控指标采集工具，与 FastAPI 一键集成，支撑全链路性能监控
+  Row35: 可视化面板 | Grafana | v11.2.0 | 2026-06-16 | https://grafana.com/grafana/download | 统一可观测性可视化面板，原生集成 Prometheus、Loki、Jaeger，实现指标 / 日志 / 链路三合一
+  Row36: API 网关 | APISIX | v3.11.0 | 2026-06-16 | https://apisix.apache.org/downloads/ | Apache 开源 API 网关，内置限流、熔断、鉴权、灰度发布能力，生产环境推荐方案
+  Row37: 前端测试 | Vitest | v2.1.8 | 2026-06-16 | https://vitest.dev/ | Vite 原生单元测试框架，零配置启动，兼容 Jest API，适配 Vue 3 与 TypeScript 项目
+  Row38: 后端测试 | pytest | v8.3.3 | 2026-06-16 | https://docs.pytest.org/en/stable/changelog.html | Python 生态标配测试框架，插件生态丰富，支撑单元测试、集成测试全场景
+  Row39: E2E 测试 | Playwright | v1.48.0 | 2026-06-16 | https://playwright.dev/ | 多浏览器端到端测试框架，支持 Python/TypeScript 双语言，覆盖 PC Web 端全流程测试
+  Row40: 性能压测 | Locust | v2.31.0 | 2026-06-16 | https://locust.io/downloads | Python 原生分布式性能压测工具，与项目技术栈统一，代码化定义压测场景
+  Row41: 小程序框架 | uni-app | v3.0.0 (Vue 3) | 2026-06-16 | https://uniapp.dcloud.net.cn/ | 跨端小程序框架，基于 Vue 3 语法，一套代码编译生成微信小程序，复用前端技术栈
+  Row42: 小程序 UI | uView Plus | v3.2.0 | 2026-06-16 | https://uiadmin.net/uview-plus/ | uni-app 生态最成熟的 Vue 3 移动端组件库，覆盖文旅小程序常见交互组件
+
+================================================================================
+FILE: 技术文档/要求.docx
+================================================================================
+[P0|Normal] 你是一名系统集成专家。请基于技术选型初案.docx的组件及版本，检查所有组件间是否存在已知的版本兼容问题。
+[P1|Normal] 检查维度：
+[P2|Normal] 1. 框架/库对语言版本的最低要求
+[P3|Normal] 2. 数据库驱动与数据库版本的兼容性
+[P4|Normal] 3. 消息队列客户端与服务端版本的协议兼容性
+[P5|Normal] 4. 容器编排平台与各组件镜像的架构兼容性 (arm/amd)
+[P6|Normal] 5. API 废弃/移除风险
+[P8|Normal] 输出《兼容性冲突清单》，对每个冲突给出具体版本要求与解决方案。
+[P9|Normal] 输出模板 - 《兼容性冲突清单》：
+
+--- Table 0 ---
+  Row0: 组件A | 组件B | 状态 | 风险描述 | 解决方案
+  Row1: Gin v1.10 | Go 1.23 | ✅ 兼容 | - | -
+  Row2: pgx v5.7 | PostgreSQL 17.2 | ✅ 兼容 | - | -
+  Row3: sarama v1.41 | Kafka 3.9.0 | ⚠️ 不兼容 | 客户端需 >=1.42 | 升级 sarama 至 v1.43.0
+

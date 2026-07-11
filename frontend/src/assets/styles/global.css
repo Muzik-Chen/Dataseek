@@ -1,0 +1,407 @@
+/* ===== Font Import ===== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;900&display=swap');
+
+/* ========================================================================
+   Design Token System — 潮汕文化宣传平台
+   品牌气质: 鲜活 / 热烈 / 有冲击力
+   设计原则: 文化即组件 · 热闹但有秩序 · 双速设计 · AI是向导 · 移动原生
+   ======================================================================== */
+
+:root {
+  /* ── Brand Colors (OKLCH) ── */
+  --brand-red:      oklch(0.53 0.22 25);   /* 英歌舞脸谱朱红 */
+  --brand-red-hover:  oklch(0.45 0.22 25);
+  --brand-red-light:  oklch(0.92 0.04 25);
+  --brand-red-muted:  oklch(0.53 0.22 25 / 0.08);  /* 门匾条幅半透明底 */
+
+  --brand-amber:      oklch(0.58 0.18 80);  /* 工夫茶琥珀金 */
+  --brand-amber-hover:  oklch(0.50 0.18 80);
+  --brand-amber-light:  oklch(0.93 0.06 80);
+  --brand-amber-wash:   oklch(0.97 0.02 80);  /* 茶叙气泡极浅底 */
+
+  --brand-jade:       oklch(0.55 0.14 160);  /* 翡翠绿 — 非遗/茶文化/自然 */
+  --brand-jade-light: oklch(0.92 0.04 160);
+
+  --brand-ink:        oklch(0.15 0.01 25);   /* 暖调正文墨色 */
+
+  /* ── Backward-compat aliases ── */
+  --primary:        var(--brand-red);
+  --primary-hover:  var(--brand-red-hover);
+  --primary-light:  var(--brand-red-light);
+  --accent:         var(--brand-amber);
+  --accent-hover:   var(--brand-amber-hover);
+  --accent-light:   var(--brand-amber-light);
+
+  /* ── Background Hierarchy ── */
+  --bg-page:          oklch(1 0 0);            /* 纯白页底 */
+  --bg-surface:       oklch(0.96 0.005 60);   /* 默认卡片底 */
+  --bg-surface-alt:   oklch(0.98 0.003 60);   /* 交替行 / 悬浮面板 */
+  --bg-overlay:       oklch(0 0 0 / 0.4);     /* 模态遮罩 */
+  --bg-overlay-light: oklch(0 0 0 / 0.2);     /* 浅遮罩 (图片叠层) */
+
+  /* backward compat */
+  --bg:      var(--bg-page);
+  --surface: var(--bg-surface);
+
+  /* ── Text Hierarchy ── */
+  --text-primary:     var(--brand-ink);        /* 正文 */
+  --text-secondary:   oklch(0.43 0.01 25);    /* 次要文字 — 4.8:1 on white, AA */
+  --text-tertiary:    oklch(0.62 0.005 25);   /* placeholder / disabled */
+  --text-inverse:     oklch(1 0 0);           /* 深色背景上的文字 */
+  --text-link:        var(--brand-red);
+
+  /* backward compat */
+  --ink:   var(--text-primary);
+  --muted: var(--text-secondary);
+
+  /* ── Border Hierarchy ── */
+  --border-default:  oklch(0 0 0 / 0.1);
+  --border-light:    oklch(0 0 0 / 0.06);
+  --border-strong:   oklch(0 0 0 / 0.15);
+  --border-accent:   oklch(0.58 0.18 80 / 0.3);  /* 琥珀色调边框 */
+
+  /* ── Status Colors ── */
+  --status-success:      oklch(0.62 0.16 150);
+  --status-success-bg:   oklch(0.94 0.04 150);
+  --status-warning:      oklch(0.72 0.16 80);
+  --status-warning-bg:   oklch(0.94 0.06 80);
+  --status-error:        oklch(0.50 0.22 25);    /* 品牌红加深 — 不映射到琥珀 */
+  --status-error-bg:     oklch(0.93 0.04 25);
+  --status-info:         oklch(0.55 0.12 240);
+  --status-info-bg:      oklch(0.93 0.04 240);
+
+  /* ── Gradient Tokens (嵌瓷色碰撞) ── */
+  --gradient-porcelain: linear-gradient(
+    90deg,
+    var(--brand-red) 0%,
+    var(--brand-amber) 50%,
+    var(--brand-jade) 100%
+  );
+  --gradient-porcelain-vertical: linear-gradient(
+    180deg,
+    var(--brand-red) 0%,
+    var(--brand-amber) 50%,
+    var(--brand-jade) 100%
+  );
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.50 0.22 25) 0%,
+    oklch(0.45 0.20 40) 50%,
+    oklch(0.35 0.15 25) 100%
+  );
+  --gradient-tea-stain: radial-gradient(
+    circle at 50% 50%,
+    oklch(0.68 0.15 80 / 0.25) 0%,
+    oklch(0.58 0.18 80 / 0.12) 60%,
+    transparent 100%
+  );
+  --gradient-card-overlay: linear-gradient(
+    180deg,
+    transparent 40%,
+    oklch(0.15 0.01 25 / 0.55) 100%
+  );
+
+  /* ── Typography ── */
+  --font-display: 'Noto Serif SC', 'STSong', 'SimSun', serif;
+  --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* Type scale — fixed rem */
+  --fs-xs:     0.75rem;    /* 12px — captions, badges, meta */
+  --fs-sm:     0.875rem;   /* 14px — secondary, labels */
+  --fs-base:   1rem;       /* 16px — body */
+  --fs-lg:     1.125rem;   /* 18px — card titles */
+  --fs-xl:     1.25rem;    /* 20px — section headers */
+  --fs-2xl:    1.5rem;     /* 24px — page titles */
+  --fs-3xl:    2rem;       /* 32px — hero titles */
+  --fs-4xl:    2.5rem;     /* 40px — landing hero */
+  --fs-banner: 3rem;       /* 48px — banner / super-hero */
+
+  /* Line heights */
+  --lh-tight:  1.2;
+  --lh-base:   1.6;
+  --lh-loose:  1.75;
+
+  /* Font weights */
+  --fw-normal:   400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    900;
+
+  /* ── Spacing — 4pt baseline grid ── */
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   16px;
+  --space-lg:   24px;
+  --space-xl:   32px;
+  --space-2xl:  48px;
+  --space-3xl:  64px;
+  --space-4xl:  96px;
+
+  /* ── Radius ── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* ── Shadows — warm-tinted, semantic scale ── */
+  --shadow-sm:  0 1px 3px oklch(0.15 0.01 25 / 0.06);
+  --shadow-md:  0 4px 12px oklch(0.15 0.01 25 / 0.08);
+  --shadow-lg:  0 8px 30px oklch(0.15 0.01 25 / 0.12);
+  --shadow-xl:  0 16px 48px oklch(0.15 0.01 25 / 0.18);
+
+  /* ── Motion ── */
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --duration-fast:        150ms;
+  --duration-base:        250ms;
+  --duration-slow:        400ms;
+  --duration-tea-stagger: 200ms;   /* 关公巡城 — 3 card sequential shimmer */
+
+  /* ── Layout ── */
+  --content-wide:   1200px;
+  --content-narrow:  800px;
+  --content-text:    680px;   /* optimal reading width ~65ch */
+  --masonry-gap:     var(--space-lg);
+  --header-height:   64px;
+
+  /* ── Z-index Scale ── */
+  --z-dropdown:       100;
+  --z-sticky:         200;
+  --z-modal-backdrop: 300;
+  --z-modal:          400;
+  --z-toast:          500;
+  --z-tooltip:        600;
+}
+
+/* ========================================================================
+   Reset & Base
+   ======================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-normal);
+  line-height: var(--lh-base);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  min-height: 100vh;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--brand-red-hover);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ========================================================================
+   Typography Utilities
+   ======================================================================== */
+
+/* Display face — use sparingly for hero titles, section headers, cultural moments */
+.display-text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.02em;
+}
+
+.display-text--hero {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  font-size: var(--fs-4xl);
+  line-height: var(--lh-tight);
+  letter-spacing: 0.03em;
+}
+
+.display-text--section {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-tight);
+  letter-spacing: 0.015em;
+}
+
+/* ========================================================================
+   Utility Classes
+   ======================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Focus — visible keyboard ring */
+:focus-visible {
+  outline: 2px solid var(--brand-red);
+  outline-offset: 2px;
+}
+
+/* ========================================================================
+   Masonry / Waterfall Layout — 韩信点兵
+   ======================================================================== */
+
+.masonry-container {
+  column-count: 3;
+  column-gap: var(--masonry-gap);
+}
+
+.masonry-container > * {
+  break-inside: avoid;
+  margin-bottom: var(--masonry-gap);
+}
+
+/* When used as the direct wrapper of cards, remove margin-bottom from last items */
+.masonry-container::after {
+  content: '';
+  display: block;
+  height: 0;
+}
+
+@media (max-width: 1023px) {
+  .masonry-container {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 639px) {
+  .masonry-container {
+    column-count: 1;
+  }
+}
+
+/* ========================================================================
+   Section Divider — 嵌瓷纹样装饰条
+   ======================================================================== */
+
+.section-divider {
+  width: 120px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-porcelain);
+  margin: 0 auto;
+}
+
+.section-divider--left {
+  margin: 0;
+}
+
+.section-divider--wide {
+  width: 200px;
+}
+
+/* ========================================================================
+   Tea-Stain Pill — 茶渍按钮 (shared by category/filter bars)
+   ======================================================================== */
+
+.tea-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.tea-pill:hover {
+  border-color: var(--brand-amber);
+  transform: scale(1.03);
+}
+
+.tea-pill.active {
+  border-color: transparent;
+  background:
+    var(--gradient-tea-stain),
+    var(--brand-amber-light);
+  color: oklch(0.35 0.08 80);
+  font-weight: var(--fw-semibold);
+  box-shadow: 0 2px 8px oklch(0.58 0.18 80 / 0.2);
+}
+
+/* ========================================================================
+   Reduced Motion
+   ======================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ========================================================================
+   Scrollbar
+   ======================================================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.65 0.005 60);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.50 0.005 60);
+}

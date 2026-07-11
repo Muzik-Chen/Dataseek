@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 extract_docx.py)",
+      "Bash(python *)",
+      "WebSearch",
+      "WebFetch(domain:pypi.org)",
+      "Bash(where claude *)",
+      "Bash(npm list *)",
+      "Skill(impeccable)",
+      "Bash(node *)",
+      "Bash(mkdir -p \"D:\\\\比赛项目\\\\潮汕宣传平台\\\\frontend\\\\src\\\\{router,stores,api,views\\\\food,views\\\\heritage,views\\\\trip,views\\\\community,views\\\\dashboard,views\\\\festival,views\\\\user,views\\\\admin,components\\\\layout,components\\\\common,components\\\\business,composables,utils,assets\\\\styles}\")",
+      "Bash(mkdir -p \"D:\\\\比赛项目\\\\潮汕宣传平台\\\\frontend\\\\public\")",
+      "Bash(npm install *)",
+      "Bash(npx vite *)",
+      "Bash(pip install *)",
+      "Bash(IMPECCABLE_CRITIQUE_META='{\"target\":\"frontend/src\",\"total_score\":18,\"p0_count\":2,\"p1_count\":2}' node *)",
+      "Bash(xargs wc -l)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X POST http://localhost:8000/api/v1/ai/chat -H \"Content-Type: application/json\" -d '{\"message\":\"你好\"}')",
+      "Bash(netstat -ano)",
+      "Bash(curl *)",
+      "Bash(taskkill //F //PID 131336)",
+      "Bash(taskkill //F //PID 114644)",
+      "Bash(cmd.exe *)",
+      "Bash(nohup python -m uvicorn main:app --host 0.0.0.0 --port 8000)",
+      "Bash(echo \"Started PID: $!\")",
+      "Bash(netsh interface *)",
+      "Bash(tasklist /FI \"PID eq 131336\" /V /FO LIST)",
+      "Bash(tasklist /FI \"IMAGENAME eq python.exe\")",
+      "Bash(powershell -Command \"Get-Process -Id 131336 -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime | Format-List\")",
+      "Bash(taskkill /F /PID 131336)",
+      "Bash(taskkill /F /PID 134716)",
+      "Bash(powershell -Command \"Stop-Process -Id 131336,134716 -Force -ErrorAction Stop; Write-Output 'Processes killed'\" 2>&1)",
+      "Bash(pip show *)",
+      "Bash(xxd)",
+      "Bash(sed -i 's/buffer = '\\\\'''\\\\'' \\\\/\\\\/ 重置 buffer，只保留未完成的行/buffer = lines.pop\\(\\) || '\\\\'''\\\\''  \\\\/\\\\/ 保留末尾不完整行到下次/' CustomerService.vue)",
+      "Bash(sed -i '257,261d' CustomerService.vue)",
+      "Bash(sed -i '256s/if \\(!line.startsWith\\(.data: .\\)\\) {/if \\(!line.startsWith\\('\\\\''data: '\\\\''\\)\\) continue/' CustomerService.vue)",
+      "Bash(ls *)",
+      "Bash(npx vue-tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(mysqladmin ping *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Server ready, code:', d.get\\('code'\\)\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('Server:', d.get\\('code'\\)\\)\")"
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  }
+}
