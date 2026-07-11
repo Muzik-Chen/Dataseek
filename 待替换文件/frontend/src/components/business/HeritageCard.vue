@@ -15,6 +15,7 @@
           :alt="item.name"
           class="heritage-card__img"
           loading="lazy"
+          @error="(e) => { e.target.style.display = 'none' }"
         />
         <span v-else class="heritage-card__placeholder">🎭</span>
       </div>
@@ -53,7 +54,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-defineProps({
+const props = defineProps({
   item: { type: Object, default: null },
 })
 
@@ -62,8 +63,8 @@ defineEmits(['favorite'])
 const router = useRouter()
 
 function goDetail() {
-  if (item?.id) {
-    router.push(`/heritages/${item.id}`)
+  if (props.item?.id) {
+    router.push(`/heritages/${props.item.id}`)
   }
 }
 

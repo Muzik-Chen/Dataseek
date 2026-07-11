@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <header class="app-header" :class="{ 'menu-open': mobileMenuOpen }">
     <div class="header-inner">
       <router-link to="/" class="logo" aria-label="潮汕文化宣传平台 首页">
@@ -24,11 +24,7 @@
       <div class="header-actions">
         <SearchBar
           v-model="searchText"
-<<<<<<< HEAD
           placeholder="搜索美食、非遗…"
-=======
-          placeholder="搜索美食、非遗OK…"
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
           :hot-keywords="hotKeywords"
           @search="onSearch"
         />
@@ -151,10 +147,22 @@ function onSearch(keyword) {
 </script>
 
 <style scoped>
-/* ============================================
+/* 
+
+
+
+
+
+==
    半透明暗灰毛玻璃导航 — 潮汕文化宣传平台
    保留水墨笔触与纹理，底色为暗灰半透明玻璃
-   ============================================ */
+   
+
+
+
+
+
+== */
 
 .app-header {
   position: sticky;
@@ -197,7 +205,9 @@ function onSearch(keyword) {
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* ========== 头部内部布局 ========== */
+/* 
+=== 头部内部布局 
+=== */
 .header-inner {
   max-width: 1280px;
   margin: 0 auto;
@@ -208,7 +218,9 @@ function onSearch(keyword) {
   gap: var(--space-lg);
 }
 
-/* ========== Logo — 朱砂印章风格（适配暗底） ========== */
+/* 
+=== Logo — 朱砂印章风格（适配暗底） 
+=== */
 .logo {
   display: flex;
   align-items: center;
@@ -257,7 +269,9 @@ function onSearch(keyword) {
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
 
-/* ========== 桌面端导航 — 匾额墨韵（暗底上保留） ========== */
+/* 
+=== 桌面端导航 — 匾额墨韵（暗底上保留） 
+=== */
 .nav-desktop {
   display: flex;
   align-items: center;
@@ -384,7 +398,9 @@ function onSearch(keyword) {
   opacity: 0.9;
 }
 
-/* ========== 操作区域 ========== */
+/* 
+=== 操作区域 
+=== */
 .header-actions {
   display: flex;
   align-items: center;
@@ -473,7 +489,9 @@ function onSearch(keyword) {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* ========== 登录/注册标签按钮 ========== */
+/* 
+=== 登录/注册标签按钮 
+=== */
 .btn-text {
   padding: 4px 12px;
   font-size: 0.78rem;
@@ -519,7 +537,9 @@ function onSearch(keyword) {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-/* ========== 移动端菜单按钮 ========== */
+/* 
+=== 移动端菜单按钮 
+=== */
 .mobile-menu-btn {
   display: none;
   border: none;
@@ -537,7 +557,9 @@ function onSearch(keyword) {
   color: #fff;
 }
 
-/* ========== 移动端抽屉 — 同样暗色玻璃风格 ========== */
+/* 
+=== 移动端抽屉 — 同样暗色玻璃风格 
+=== */
 .nav-mobile {
   display: none;
   flex-direction: column;
@@ -633,7 +655,9 @@ function onSearch(keyword) {
   );
 }
 
-/* ========== 过渡动画 ========== */
+/* 
+=== 过渡动画 
+=== */
 .drawer-slide-enter-active,
 .drawer-slide-leave-active {
   transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -645,7 +669,9 @@ function onSearch(keyword) {
   transform: translateY(-12px);
 }
 
-/* ========== 响应式 ========== */
+/* 
+=== 响应式 
+=== */
 @media (max-width: 1023px) {
   .nav-desktop { display: none; }
   .mobile-menu-btn { display: flex; }
@@ -693,8 +719,4 @@ function onSearch(keyword) {
     font-size: 0.9rem;
   }
 }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22

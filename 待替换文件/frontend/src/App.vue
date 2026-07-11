@@ -1,16 +1,16 @@
 <template>
   <div id="chaoshan-app" :class="{ 'no-header-footer': hideLayout }">
     <AppHeader v-if="!hideLayout && !isAdminRoute" @toggle-search="searchVisible = true" />
-    <main class="main-content">
+    <main class="main-content" :class="{ 'main-content--full': isFullMap }">
       <router-view v-slot="{ Component }">
         <transition name="page-fade" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
     </main>
-    <AppFooter v-if="!hideLayout && !isAdminRoute" />
+    <AppFooter v-if="!hideLayout && !isAdminRoute && !isFullMap" />
     <!-- 全局组件 -->
-    <ChatWidget v-if="!isAdminRoute && route.path !== '/chat'" />
+    <ChatWidget v-if="!isAdminRoute && !isFullMap && route.path !== '/chat'" />
     <SearchOverlay v-model="searchVisible" />
   </div>
 </template>
@@ -29,10 +29,11 @@ const searchVisible = ref(false)
 
 const hideLayout = computed(() => {
   const path = route.path
-  return path.startsWith('/admin')
+  return path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/admin')
 })
 
 const isAdminRoute = computed(() => route.path.startsWith('/admin'))
+const isFullMap = computed(() => route.meta.fullMap)
 </script>
 
 <style>
@@ -48,14 +49,23 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 var(--space-md);
-  /* 潮汕风景照背景 — 与首页探索潮汕以下部分保持一致 */
-  background:
-    linear-gradient(180deg, oklch(0.95 0.01 85 / 0.92) 0%, oklch(0.92 0.02 80 / 0.88) 100%),
-    url('https://images.unsplash.com/photo-1587876933737-e1570c20fb09?w=1920&h=1080&fit=crop') center/cover no-repeat fixed;
-  background-attachment: fixed;
+  /* 极淡纸纹 — 用品牌琥珀色在 2% 透明度模拟宣纸质感 */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      oklch(0.75 0.06 75 / 0.015) 2px,
+      oklch(0.75 0.06 75 / 0.015) 4px
+    );
 }
 
 #chaoshan-app.no-header-footer .main-content {
+  max-width: none;
+  padding: 0;
+}
+
+.main-content--full {
   max-width: none;
   padding: 0;
 }
@@ -68,12 +78,5 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 .page-fade-enter-from,
 .page-fade-leave-to {
   opacity: 0;
-}
-
-/* iOS 移动端：取消 fixed 背景附着（避免渲染闪烁） */
-@media (max-width: 767px) {
-  .main-content {
-    background-attachment: scroll;
-  }
 }
 </style>

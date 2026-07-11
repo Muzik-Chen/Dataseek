@@ -1,6 +1,5 @@
 <template>
   <div class="food-detail-page">
-    <BackButton />
     <!-- 加载中 -->
     <LoadingSkeleton v-if="loading" type="detail" />
 
@@ -17,14 +16,15 @@
     <!-- 内容 -->
     <template v-else-if="food">
       <!-- 图片区域 -->
-      <div class="hero-image">
+      <div class="hero-image" @click="food.image_url && viewer.open([food.image_url])">
         <el-image v-if="food.image_url" :src="food.image_url" fit="cover" class="cover-img" />
         <div v-else class="cover-placeholder">🍲</div>
         <div class="hero-overlay">
           <el-tag v-if="food.is_recommended" type="danger" effect="dark">🔥 推荐</el-tag>
-          <span class="type-badge">{{ food.type === 'shop' ? '热门店铺' : '推荐菜品': '' }}</span>
+          <span class="type-badge">{{ food.type === 'shop' ? '店铺' : '菜品' }}</span>
         </div>
       </div>
+      <ImageViewer ref="viewer" />
 
       <!-- 基本信息 -->
       <div class="info-section">
@@ -95,13 +95,13 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { getFoodDetail, getFoods, addFavorite, removeFavorite } from '@/api'
-import BackButton from '@/components/common/BackButton.vue'
 import FoodCard from '@/components/business/FoodCard.vue'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
+import ImageViewer from '@/components/common/ImageViewer.vue'
 
 const route = useRoute()
 
-
+const viewer = ref(null)
 const food = ref(null)
 const loading = ref(true)
 const error = ref('')

@@ -1,6 +1,5 @@
 <template>
   <div class="post-create-page">
-    <BackButton />
     <div class="page-header">
       <h1>✍️ 发布动态</h1>
       <p>分享你的潮汕探索故事、美食推荐或文化发现</p>
@@ -33,21 +32,20 @@
         </el-form-item>
 
         <el-form-item label="标签">
-          <el-select
-            v-model="form.tags"
-            multiple
-            filterable
-            allow-create
-            placeholder="添加标签（回车创建）"
-            style="width:100%"
-          >
-            <el-option
+          <div class="preset-tags">
+            <button
               v-for="t in presetTags"
               :key="t"
-              :label="t"
-              :value="t"
-            />
-          </el-select>
+              :class="['tea-pill', 'tea-pill--sm', { active: form.tags.includes(t) }]"
+              :disabled="form.tags.length >= 5"
+              @click="toggleTag(t)"
+            >{{ t }}</button>
+          </div>
+          <TagInput v-model="form.tags" :limit="5" placeholder="输入自定义标签，回车添加" />
+        </el-form-item>
+
+        <el-form-item label="图片">
+          <ImageUploader v-model="form.images" :limit="9" />
         </el-form-item>
 
         <el-form-item>
@@ -66,7 +64,8 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createPost } from '@/api'
-import BackButton from '@/components/common/BackButton.vue'
+import TagInput from '@/components/common/TagInput.vue'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const router = useRouter()
 const formRef = ref(null)
@@ -77,6 +76,7 @@ const form = reactive({
   title: '',
   content: '',
   tags: [],
+  images: [],
 })
 
 const presetTags = [
@@ -84,6 +84,15 @@ const presetTags = [
   '南澳岛', '牌坊街', '小公园', '潮剧', '美食推荐',
   '旅行攻略', '非遗体验', '民俗活动', '探店', '文化知识',
 ]
+
+function toggleTag(tag) {
+  const idx = form.tags.indexOf(tag)
+  if (idx >= 0) {
+    form.tags.splice(idx, 1)
+  } else if (form.tags.length < 5) {
+    form.tags.push(tag)
+  }
+}
 
 const rules = {
   post_type: [{ required: true }],
@@ -108,6 +117,7 @@ async function publish() {
       content: form.content,
       post_type: form.post_type,
       tags: form.tags,
+      images: form.images,
     })
     ElMessage.success('发布成功！')
     router.push('/community')
@@ -137,4 +147,26 @@ async function publish() {
   padding: var(--space-2xl);
   box-shadow: 0 2px 12px oklch(0 0 0 / 0.04);
 }
+
+.preset-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.tea-pill--sm {
+  padding: 2px 10px;
+  font-size: var(--fs-xs);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tea-pill--sm:hover { border-color: var(--brand-red); color: var(--brand-red); }
+.tea-pill--sm.active { background: var(--brand-red); color: #fff; border-color: var(--brand-red); }
+.tea-pill--sm:disabled { opacity: 0.4; cursor: not-allowed; }
 </style>

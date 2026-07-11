@@ -16,6 +16,10 @@
         <span>非遗项目</span>
       </div>
       <div class="stat-card">
+        <strong>{{ stats.totalEvents }}</strong>
+        <span>民俗活动</span>
+      </div>
+      <div class="stat-card">
         <strong>{{ stats.totalPosts }}</strong>
         <span>社区动态</span>
       </div>
@@ -37,36 +41,37 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import adminApi from '@/api/admin'
 
 const stats = ref({
   totalUsers: 0,
   totalFoods: 0,
   totalHeritages: 0,
+  totalEvents: 0,
   totalPosts: 0,
 })
 
 onMounted(async () => {
   try {
-    const resp = await fetch('/api/v1/dashboard/overview')
-    const data = await resp.json()
-    if (data.code === 0) {
-      stats.value.totalUsers = data.data.total_users
-      stats.value.totalFoods = data.data.total_foods
-      stats.value.totalHeritages = data.data.total_heritages
-      stats.value.totalPosts = data.data.total_posts
+    const data = await adminApi.stats()
+    if (data) {
+      stats.value.totalUsers = data.total_users ?? 0
+      stats.value.totalFoods = data.total_foods ?? 0
+      stats.value.totalHeritages = data.total_heritages ?? 0
+      stats.value.totalEvents = data.total_events ?? 0
+      stats.value.totalPosts = data.total_posts ?? 0
     }
-  } catch { /* 静默 */ }
+  } catch { /* handled by interceptor */ }
 })
 </script>
 
 <style scoped>
 .admin-dashboard { max-width: 1000px; }
-
 .admin-dashboard h1 { font-size: var(--fs-2xl); color: var(--ink); margin: 0 0 var(--space-2xl); }
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-lg);
   margin-bottom: var(--space-2xl);
 }

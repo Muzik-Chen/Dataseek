@@ -46,6 +46,7 @@ export const updateUserProfile = userApi.updateProfile.bind(userApi)
 export const getUserFavorites = userApi.getFavorites.bind(userApi)
 export const addFavorite = userApi.addFavorite.bind(userApi)
 export const removeFavorite = userApi.removeFavorite.bind(userApi)
+export const checkFavorite = userApi.checkFavorite.bind(userApi)
 
 // Chat
 import { chatApi } from './chat'
@@ -82,23 +83,15 @@ export const sendMessage = messageApi.send.bind(messageApi)
 // Dashboard
 import { dashboardApi } from './dashboard'
 export { dashboardApi }
-export const getWeather = dashboardApi.weather.bind(dashboardApi)
-export const getCrowd = dashboardApi.crowd.bind(dashboardApi)
-export const getCrowdHistory = dashboardApi.crowdHistory.bind(dashboardApi)
-export const getCrowdGeo = dashboardApi.crowdGeo.bind(dashboardApi)
-export const getWeatherGeo = dashboardApi.weatherGeo.bind(dashboardApi)
 
 // Hotel
 import { hotelApi } from './hotel'
 export { hotelApi }
-export const getHotels = hotelApi.list.bind(hotelApi)
-export const getHotelDetail = hotelApi.detail.bind(hotelApi)
+export const getWeather = dashboardApi.weather.bind(dashboardApi)
+export const getCrowd = dashboardApi.crowd.bind(dashboardApi)
 
 // Admin
 export { adminApi } from './admin'
 
 // Search
 export { searchApi } from './search'
-
-// Music
-export { musicApi } from './music'

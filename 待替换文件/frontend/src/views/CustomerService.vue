@@ -1,6 +1,5 @@
 <template>
   <div class="chat-page">
-    <BackButton />
     <div class="chat-container">
       <!-- 侧边栏：会话列表 -->
       <aside class="chat-sidebar">
@@ -97,6 +96,14 @@
                   </div>
                   <div v-if="!plan.error && plan.estimated_cost" class="trip-card-cost">
                     💰 预估人均：¥{{ plan.estimated_cost.total || '—' }}
+                  </div>
+                  <!-- Phase 2: Enrichment 摘要 -->
+                  <div v-if="plan.enrichment" class="trip-card-enrich">
+                    <span v-if="plan.enrichment.weather?.length" class="enrich-badge weather">🌤️ {{ plan.enrichment.weather.length }}处天气</span>
+                    <span v-if="plan.enrichment.foods?.length" class="enrich-badge food">🍲 {{ plan.enrichment.foods.length }}家美食</span>
+                    <span v-if="plan.enrichment.heritages?.length" class="enrich-badge heritage">🏛️ {{ plan.enrichment.heritages.length }}项非遗</span>
+                    <span v-if="plan.enrichment.hotels?.length" class="enrich-badge hotel">🏨 {{ plan.enrichment.hotels.length }}家酒店</span>
+                    <span v-if="plan.enrichment.crowd?.length" class="enrich-badge crowd">👥 {{ plan.enrichment.crowd.length }}处人流</span>
                   </div>
                 </div>
               </div>
@@ -220,7 +227,6 @@ import { useRouter } from 'vue-router'
 import { Plus, Promotion } from '@element-plus/icons-vue'
 import { useChatStore, INTENT_CONFIG } from '@/stores/chat'
 import { useUserStore } from '@/stores/user'
-import BackButton from '@/components/common/BackButton.vue'
 import { getChatSession, getChatHistory } from '@/api'
 
 const chatStore = useChatStore()
@@ -341,6 +347,7 @@ async function sendToAI(userContent) {
       foodItems: [],
       foodSummary: '',
       isStreaming: true,
+      enrichment: null,  // Phase 2: enrichment data by plan_id
     }
     chatStore.messages.push(assistantMsg)
     streamingMessageId.value = msgId
@@ -411,6 +418,30 @@ async function sendToAI(userContent) {
                 assistantMsg.content = extraContent
               }
               break
+
+            // ── Phase 2: Route Enrichment Events ──
+            case 'route_weather':
+            case 'route_foods':
+            case 'route_heritages':
+            case 'route_hotels':
+            case 'route_crowd': {
+              const planId = data.plan_id
+              const enrichType = data.type  // e.g. 'route_weather'
+              const enrichData = data  // full event payload
+              // Inject into matching trip plan
+              if (planId && assistantMsg.tripPlans.length) {
+                const plan = assistantMsg.tripPlans.find(p => p.plan_id === planId)
+                if (plan) {
+                  if (!plan.enrichment) plan.enrichment = {}
+                  // Extract the data key (weather / foods / heritages / hotels / crowd)
+                  const dataKey = enrichType.replace('route_', '')
+                  plan.enrichment[dataKey] = enrichData[dataKey] || enrichData[dataKey + 's'] || enrichData
+                }
+              }
+              // Also store in the store
+              chatStore.updateMessageEnrichment(msgId, planId, enrichType, enrichData)
+              break
+            }
 
             case 'ask':
               assistantMsg.content = data.question || assistantMsg.content
@@ -768,6 +799,27 @@ async function scrollToBottom() {
   color: var(--primary);
   font-weight: 600;
 }
+
+/* ── Phase 2: Enrichment Badges ── */
+.trip-card-enrich {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.enrich-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.enrich-badge.weather { background: oklch(0.55 0.14 160 / 0.1); color: #276749; }
+.enrich-badge.food { background: #FFF3E0; color: #E65100; }
+.enrich-badge.heritage { background: #FFEBEE; color: #C62828; }
+.enrich-badge.hotel { background: #E3F2FD; color: #1565C0; }
+.enrich-badge.crowd { background: #F3E5F5; color: #6A1B9A; }
 
 /* ====== 美食卡片 ====== */
 .food-cards {

@@ -1,22 +1,12 @@
 """
-<<<<<<< HEAD
 节日/民俗活动路由 — 前台浏览（后台管理移至 AdminResource 工厂）。
 """
 from fastapi import APIRouter, Depends, Query
-=======
-节日/民俗活动路由 — 前台浏览 + 后台管理。
-"""
-from fastapi import APIRouter, Depends, HTTPException, Query
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import date
 
 from database import get_db
-<<<<<<< HEAD
-=======
-from utils.dependencies import get_current_user, require_admin
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 from utils.response import success_response, error_response
 from models.heritage import FolkEvent
 
@@ -109,47 +99,3 @@ async def get_event_detail(
         "event_type": event.event_type,
         "created_at": str(event.created_at) if event.created_at else None,
     })
-<<<<<<< HEAD
-=======
-
-
-# ===== 管理后台接口（需 admin 权限）=====
-
-@router.post("/admin/events")
-async def create_event(
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(require_admin),
-):
-    """新增节日/活动。"""
-    # Note: 完整实现需要 Pydantic request body model
-    return success_response(message="已创建")
-
-
-@router.put("/admin/events/{event_id}")
-async def update_event(
-    event_id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(require_admin),
-):
-    """编辑节日/活动。"""
-    event = await db.get(FolkEvent, event_id)
-    if not event:
-        return error_response("E1006", "活动不存在")
-    # Note: 完整实现需要 Pydantic request body model
-    return success_response(message="已更新")
-
-
-@router.delete("/admin/events/{event_id}")
-async def delete_event(
-    event_id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user=Depends(require_admin),
-):
-    """删除节日/活动。"""
-    event = await db.get(FolkEvent, event_id)
-    if not event:
-        return error_response("E1006", "活动不存在")
-    await db.delete(event)
-    await db.commit()
-    return success_response(message="已删除")
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22

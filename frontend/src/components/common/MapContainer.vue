@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="map-wrapper" :style="{ height: height }">
     <!-- Key 未配置占位 -->
     <div v-if="!configured" class="map-placeholder">
@@ -570,11 +570,7 @@ watch(() => props.showTraffic, (val) => { renderTraffic(val) })
 .map-route-legend {
   position: absolute;
   bottom: 12px;
-<<<<<<< HEAD
   right: 12px;
-=======
-  left: 12px;
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   z-index: 100;
   background: rgba(255, 255, 255, 0.92);
   border-radius: 10px;

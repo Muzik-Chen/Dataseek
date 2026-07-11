@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="image-uploader">
     <div class="image-uploader__list">
       <div
@@ -54,10 +54,7 @@ import { ref } from 'vue'
 import { Plus, Delete } from '@element-plus/icons-vue'
 import { toast } from '@/utils/toast'
 import { validateFileSize, validateImageType } from '@/utils/validators'
-<<<<<<< HEAD
 import api from '@/api/request'
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
@@ -97,7 +94,6 @@ async function handleFiles(e) {
       continue
     }
 
-<<<<<<< HEAD
     // 先插入占位 URL 用于显示上传进度
     const placeholderIdx = props.modelValue.length
     const newUrls = [...props.modelValue, '']
@@ -132,12 +128,6 @@ async function handleFiles(e) {
       delete uploading.value[placeholderIdx]
       delete progress.value[placeholderIdx]
     }
-=======
-    // 本地预览（实际项目中应上传到服务器获取 URL）
-    const localUrl = URL.createObjectURL(file)
-    const newUrls = [...props.modelValue, localUrl]
-    emit('update:modelValue', newUrls)
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   }
 }
 

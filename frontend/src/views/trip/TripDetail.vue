@@ -1,6 +1,5 @@
 <template>
   <div class="trip-detail-page">
-    <BackButton />
     <LoadingSkeleton v-if="loading" type="detail" />
 
     <div v-else-if="error" class="error-state">
@@ -110,7 +109,6 @@ import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
 import TripCard from '@/components/business/TripCard.vue'
 import MapContainer from '@/components/common/MapContainer.vue'
 import { planToMapData } from '@/utils/mapAdapter'
-import BackButton from '@/components/common/BackButton.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -246,3 +244,4 @@ onMounted(() => fetchDetail())
 @media (max-width: 640px) {
   .trip-map-section { margin-bottom: var(--space-lg); }
 }
+</style>

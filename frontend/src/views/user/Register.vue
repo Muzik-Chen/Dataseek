@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="auth-page">
     <div class="auth-card">
       <div class="auth-header">
@@ -136,11 +136,7 @@ const validateConfirmPassword = (rule, value, callback) => {
 const rules = {
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
-<<<<<<< HEAD
     { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '邮箱格式不正确', trigger: 'blur' },
-=======
-    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' },
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   ],
   code: [
     { required: true, message: '请输入验证码', trigger: 'blur' },

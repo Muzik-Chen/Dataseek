@@ -195,6 +195,8 @@ const msgContainer = ref(null)
 const quickOptions = ref([])
 const lastTripParams = ref(null)
 const tripPlans = ref([])
+const savedTripPlans = ref([])       // persisted across onDone for save button
+const enrichmentByPlanId = ref({})  // Phase 2: enrichment data keyed by plan_id
 
 // ── 拖拽状态（仅作用于 panel，FAB 按钮固定不动）──
 const panelRef = ref(null)
@@ -298,6 +300,8 @@ function startNewChat() {
   quickOptions.value = []
   lastTripParams.value = null
   tripPlans.value = []
+  savedTripPlans.value = []
+  enrichmentByPlanId.value = {}
 }
 
 function sendCurrentMessage() {
@@ -321,11 +325,21 @@ async function sendMessage(text) {
     },
     onDone(sessionId) {
       if (sessionId) chatStore.setSessionId(sessionId)
-      // 将累积的行程方案格式化为文字输出
+      // Phase 2: merge enrichment into trip plans before formatting
       if (tripPlans.value.length > 0) {
+        for (const plan of tripPlans.value) {
+          if (enrichmentByPlanId.value[plan.plan_id]) {
+            plan.enrichment = enrichmentByPlanId.value[plan.plan_id]
+          }
+        }
+        // Persist plans for save button (tripPlans is cleared below)
+        savedTripPlans.value = tripPlans.value.map(p => ({ ...p }))
         const formattedText = formatTripPlansAsText(tripPlans.value)
-        chatStore.addMessage('assistant', formattedText, 'trip_text')
+        const msgId = chatStore.addMessage('assistant', formattedText, 'trip_text')
+        // Attach trip plans to the message so handleSaveTripText can access them
+        chatStore.updateMessage(msgId, { tripPlans: tripPlans.value.map(p => ({ ...p })) })
         tripPlans.value = []
+        enrichmentByPlanId.value = {}
       }
       // 意图导航 — useSSE 的 done 事件已通过 setLastAssistantIntents 处理
       // 此处保留兜底：如果 currentIntent 有值但 intents 未设置
@@ -375,6 +389,37 @@ async function sendMessage(text) {
     onError(msg) {
       chatStore.clearThinking()
       streamError.value = msg
+    },
+    // ── Phase 2: Route Enrichment Callbacks ──
+    onRouteWeather(data) {
+      if (data.plan_id) {
+        if (!enrichmentByPlanId.value[data.plan_id]) enrichmentByPlanId.value[data.plan_id] = {}
+        enrichmentByPlanId.value[data.plan_id].weather = data.weather || data
+      }
+    },
+    onRouteFoods(data) {
+      if (data.plan_id) {
+        if (!enrichmentByPlanId.value[data.plan_id]) enrichmentByPlanId.value[data.plan_id] = {}
+        enrichmentByPlanId.value[data.plan_id].foods = data.foods || data
+      }
+    },
+    onRouteHeritages(data) {
+      if (data.plan_id) {
+        if (!enrichmentByPlanId.value[data.plan_id]) enrichmentByPlanId.value[data.plan_id] = {}
+        enrichmentByPlanId.value[data.plan_id].heritages = data.heritages || data
+      }
+    },
+    onRouteHotels(data) {
+      if (data.plan_id) {
+        if (!enrichmentByPlanId.value[data.plan_id]) enrichmentByPlanId.value[data.plan_id] = {}
+        enrichmentByPlanId.value[data.plan_id].hotels = data.hotels || data
+      }
+    },
+    onRouteCrowd(data) {
+      if (data.plan_id) {
+        if (!enrichmentByPlanId.value[data.plan_id]) enrichmentByPlanId.value[data.plan_id] = {}
+        enrichmentByPlanId.value[data.plan_id].crowd = data.crowd || data
+      }
     },
   })
 }
@@ -454,6 +499,53 @@ function formatTripPlansAsText(plans) {
       })
       html += '</ul>'
     }
+
+    // ── Phase 2: Enrichment 富化数据 ──
+    const enrich = plan.enrichment
+    if (enrich) {
+      // 天气
+      if (enrich.weather?.length) {
+        html += '<h4 class="trip-h4">🌤️ 沿途天气</h4><div class="trip-enrich-weather">'
+        enrich.weather.forEach(w => {
+          html += `<span class="enrich-weather-chip">${escapeHtml(w.city || '')} ${w.temperature || '—'}℃ ${escapeHtml(w.weather_desc || '')}</span>`
+        })
+        html += '</div>'
+      }
+      // 周边美食
+      if (enrich.foods?.length) {
+        html += '<h4 class="trip-h4">🍲 周边美食</h4><div class="trip-enrich-grid">'
+        enrich.foods.slice(0, 6).forEach(f => {
+          html += `<span class="enrich-chip food">🍲 ${escapeHtml(f.name)}<small>${f.distance_km != null ? f.distance_km.toFixed(1) + 'km' : ''}</small></span>`
+        })
+        html += '</div>'
+      }
+      // 周边非遗
+      if (enrich.heritages?.length) {
+        html += '<h4 class="trip-h4">🏛️ 周边非遗</h4><div class="trip-enrich-grid">'
+        enrich.heritages.slice(0, 6).forEach(h => {
+          html += `<span class="enrich-chip heritage">🏛️ ${escapeHtml(h.name)}<small>${h.distance_km != null ? h.distance_km.toFixed(1) + 'km' : ''}</small></span>`
+        })
+        html += '</div>'
+      }
+      // 周边酒店
+      if (enrich.hotels?.length) {
+        html += '<h4 class="trip-h4">🏨 附近酒店</h4><div class="trip-enrich-grid">'
+        enrich.hotels.slice(0, 4).forEach(h => {
+          const stars = '⭐'.repeat(h.stars || 0)
+          html += `<span class="enrich-chip hotel">🏨 ${escapeHtml(h.name)} ${stars}<small>¥${h.price_min || '—'}/晚 · ${h.distance_km != null ? h.distance_km.toFixed(1) + 'km' : ''}</small></span>`
+        })
+        html += '</div>'
+      }
+      // 人流
+      if (enrich.crowd?.length) {
+        html += '<h4 class="trip-h4">👥 实时人流</h4><div class="trip-enrich-grid">'
+        const levelEmoji = { '低': '🟢', '中': '🟡', '高': '🔴' }
+        enrich.crowd.forEach(c => {
+          html += `<span class="enrich-chip crowd">${levelEmoji[c.crowd_level] || '🔵'} ${escapeHtml(c.location_name || '')}<small>${c.crowd_level || '—'} · ${c.estimated_count || '—'}人</small></span>`
+        })
+        html += '</div>'
+      }
+    }
   })
 
   return html
@@ -474,25 +566,46 @@ async function handleSaveTrip(plan) {
     return
   }
   try {
-    await tripApi.create({
-      title: plan.title || 'AI 行程方案',
+    await tripApi.importPlan({
+      title: plan.title || plan.theme || 'AI 行程方案',
       days: plan.days?.length || 3,
-      crowd_type: 'family',
-      preferences: [],
+      crowd_type: plan._crowd_type || lastTripParams.value?.crowd_type || 'solo',
+      preferences: plan._preferences || lastTripParams.value?.preferences || [],
+      plan_content: {
+        plans: [plan],
+      },
     })
-    ElMessage.success('行程已保存！')
+    ElMessage.success('行程已保存！可在个人中心查看')
   } catch {
     ElMessage.error('保存失败，请重试')
   }
 }
 
-function handleSaveTripText(msg) {
-  // 从 HTML content 中提取纯文本用于保存
-  const tempDiv = document.createElement('div')
-  tempDiv.innerHTML = msg.content || ''
-  const plainText = tempDiv.textContent || tempDiv.innerText || ''
-  // 尝试解析回 plan 数据（从 tripPlans 获取）
-  ElMessage.info('行程内容已展示，可通过行程规划页面创建并保存')
+async function handleSaveTripText(msg) {
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录')
+    return
+  }
+  // Try msg.tripPlans first (persisted in onDone), fall back to savedTripPlans
+  const plans = msg.tripPlans?.length ? msg.tripPlans : savedTripPlans.value
+  if (!plans || !plans.length) {
+    ElMessage.info('没有可保存的行程数据，请重新规划')
+    return
+  }
+  try {
+    for (const plan of plans) {
+      await tripApi.importPlan({
+        title: plan.title || plan.theme || 'AI 行程方案',
+        days: plan.days?.length || 3,
+        crowd_type: plan._crowd_type || 'solo',
+        preferences: plan._preferences || [],
+        plan_content: { plans: [plan] },
+      })
+    }
+    ElMessage.success(`${plans.length} 套方案已保存！可在个人中心查看`)
+  } catch {
+    ElMessage.error('保存失败，请重试')
+  }
 }
 
 function handleCopyTripText(msg) {
@@ -902,6 +1015,38 @@ function scrollToBottom() {
   border: none;
   border-top: 1px dashed var(--border-default);
   margin: 16px 0;
+}
+
+/* ── Phase 2: Enrichment 富化数据样式 ── */
+.trip-text__content :deep(.trip-enrich-weather) {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px;
+}
+.trip-text__content :deep(.enrich-weather-chip) {
+  background: oklch(0.55 0.14 160 / 0.1);
+  color: var(--brand-jade);
+  padding: 2px 8px; border-radius: 10px; font-size: 11px;
+}
+.trip-text__content :deep(.trip-enrich-grid) {
+  display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px;
+}
+.trip-text__content :deep(.enrich-chip) {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 10px; font-size: 11px;
+}
+.trip-text__content :deep(.enrich-chip small) {
+  opacity: 0.7; font-size: 10px;
+}
+.trip-text__content :deep(.enrich-chip.food) {
+  background: #FFF3E0; color: #E65100;
+}
+.trip-text__content :deep(.enrich-chip.heritage) {
+  background: #FFEBEE; color: #C62828;
+}
+.trip-text__content :deep(.enrich-chip.hotel) {
+  background: #E3F2FD; color: #1565C0;
+}
+.trip-text__content :deep(.enrich-chip.crowd) {
+  background: #F3E5F5; color: #6A1B9A;
 }
 
 .trip-text__actions {

@@ -1,11 +1,7 @@
-<template>
+﻿<template>
   <div class="festival-detail-wrapper">
     <!-- 两侧底色装饰 -->
-<<<<<<< HEAD
     <div class="side-decorations" aria-hidden="true">
-=======
-    <div class="side-decorations">
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       <img src="/images/events/decorations/祥云1.png" class="side-deco side-left-1" />
       <img src="/images/events/decorations/祥云4.png" class="side-deco side-left-2" />
       <img src="/images/events/decorations/直纹1.png" class="side-deco side-left-3" />
@@ -15,7 +11,6 @@
     </div>
 
     <div class="festival-detail-page">
-<<<<<<< HEAD
       <BackButton />
       <div class="page-hero">
         <h1 class="display-text--section">{{ event?.name || '民俗活动详情' }}</h1>
@@ -78,70 +73,6 @@
         <img src="/images/events/decorations/直纹5.png" class="deco deco-stripe5" />
       </div>
     </div>
-=======
-    <BackButton />
-    <div class="page-hero">
-      <h1 class="display-text--section">{{ event?.name || '民俗活动详情' }}</h1>
-      <p v-if="slogan" class="festival-slogan">{{ slogan }}</p>
-      <div class="section-divider section-divider--left"></div>
-    </div>
-
-    <LoadingSkeleton v-if="loading" type="detail" />
-    <EmptyState v-else-if="!event" description="活动不存在或已删除" />
-
-    <div v-else class="detail-content">
-      <!-- 图片轮播区域 · 左浮动，文字环绕 -->
-      <div class="image-carousel">
-        <div class="carousel-viewport">
-          <img
-            :src="images[currentIndex]"
-            :alt="event.name"
-            class="carousel-image"
-            @error="onImageError"
-          />
-          <button
-            v-if="images.length > 1"
-            class="carousel-btn carousel-btn--prev"
-            @click="prevImage"
-          >&#10094;</button>
-          <button
-            v-if="images.length > 1"
-            class="carousel-btn carousel-btn--next"
-            @click="nextImage"
-          >&#10095;</button>
-        </div>
-        <div v-if="images.length > 1" class="carousel-dots">
-          <span
-            v-for="(_, i) in images"
-            :key="i"
-            class="dot"
-            :class="{ active: i === currentIndex }"
-            @click="currentIndex = i"
-          ></span>
-        </div>
-      </div>
-
-      <div class="text-body">
-        <p>{{ event?.description || '暂无描述' }}</p>
-      </div>
-    </div>
-
-    <!-- 装饰图层 · 外层盒子避免裁剪 -->
-    <div class="decorations">
-      <img src="/images/events/decorations/祥云1.png" class="deco deco-cloud1" />
-      <img src="/images/events/decorations/祥云2.png" class="deco deco-cloud2" />
-      <img src="/images/events/decorations/祥云3.png" class="deco deco-cloud3" />
-      <img src="/images/events/decorations/祥云4.png" class="deco deco-cloud4" />
-      <img src="/images/events/decorations/云纹1.png" class="deco deco-pattern1" />
-      <img src="/images/events/decorations/云纹2.png" class="deco deco-pattern2" />
-      <img src="/images/events/decorations/直纹1.png" class="deco deco-stripe1" />
-      <img src="/images/events/decorations/直纹2.png" class="deco deco-stripe2" />
-      <img src="/images/events/decorations/直纹3.png" class="deco deco-stripe3" />
-      <img src="/images/events/decorations/直纹4.png" class="deco deco-stripe4" />
-      <img src="/images/events/decorations/直纹5.png" class="deco deco-stripe5" />
-    </div>
-  </div>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   </div>
 </template>
 
@@ -178,28 +109,14 @@ const images = computed(() => {
     const parsed = JSON.parse(event.value.image_url)
     return Array.isArray(parsed) ? parsed : []
   } catch {
-<<<<<<< HEAD
-=======
     // 单张图片：字符串直接作为数组
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     return event.value.image_url ? [event.value.image_url] : []
   }
 })
 
-<<<<<<< HEAD
 function onImageError() {
   brokenImages.value.add(currentIndex.value)
   if (brokenImages.value.size >= images.value.length) return
-=======
-const validImages = computed(() =>
-  images.value.filter((_, i) => !brokenImages.value.has(i))
-)
-
-function onImageError() {
-  brokenImages.value.add(currentIndex.value)
-  if (brokenImages.value.size >= images.value.length) return
-  // 尝试下一张
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   let next = (currentIndex.value + 1) % images.value.length
   while (brokenImages.value.has(next) && next !== currentIndex.value) {
     next = (next + 1) % images.value.length
@@ -298,11 +215,7 @@ onMounted(async () => {
   z-index: 1;
 }
 
-<<<<<<< HEAD
 /* 装饰图层 · 30%透明 */
-=======
-/* 装饰图层 · 30%透明 · 挂在外层避免裁剪 */
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 .decorations {
   position: absolute;
   inset: 0;
@@ -347,11 +260,7 @@ onMounted(async () => {
   height: 405px;
   overflow: hidden;
   border-radius: 8px;
-<<<<<<< HEAD
   background: var(--bg-surface);
-=======
-  background: var(--surface, #f5f0eb);
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }
 
 .carousel-image {
@@ -394,20 +303,12 @@ onMounted(async () => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-<<<<<<< HEAD
   background: var(--muted);
-=======
-  background: var(--muted, #ccc);
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   cursor: pointer;
   transition: background 0.2s;
 }
 .dot.active {
-<<<<<<< HEAD
   background: var(--primary);
-=======
-  background: var(--primary, #c0392b);
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }
 
 .text-body {
@@ -427,11 +328,8 @@ onMounted(async () => {
     width: 100%;
     height: 330px;
   }
-<<<<<<< HEAD
   .page-hero h1 {
     font-size: 2rem;
   }
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }
 </style>

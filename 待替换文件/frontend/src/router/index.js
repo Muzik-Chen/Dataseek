@@ -39,16 +39,10 @@ const routes = [
     meta: { title: '节日日历' },
   },
   {
-    path: '/festival/:id',
-    name: 'FestivalDetail',
-    component: () => import('@/views/festival/FestivalDetail.vue'),
-    meta: { title: '民俗详情' },
-  },
-  {
     path: '/trip/create',
     name: 'TripCreate',
     component: () => import('@/views/trip/TripCreate.vue'),
-    meta: { title: '创建行程', requiresAuth: true },
+    meta: { title: '创建行程', requiresAuth: true, fullMap: true },
   },
   {
     path: '/trip/:id',

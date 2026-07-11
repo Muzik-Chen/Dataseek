@@ -1,6 +1,5 @@
 <template>
   <div class="food-list-page">
-    <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
       <h1 class="display-text--section">🍲 潮汕美食</h1>
@@ -42,11 +41,7 @@
           <el-option label="菜品" value="dish" />
           <el-option label="店铺" value="shop" />
         </el-select>
-        <el-select v-model="sort" style="width:130px" @change="fetchFoods">
-          <el-option label="🔥 最热门" value="view_count" />
-          <el-option label="🕐 最新" value="created_at" />
-          <el-option label="💰 价格" value="price_range" />
-        </el-select>
+        <SortDropdown v-model="sort" :options="sortOptions" @change="fetchFoods" />
       </div>
     </div>
 
@@ -67,16 +62,12 @@
     </div>
 
     <!-- 分页 -->
-    <div v-if="total > pageSize" class="pagination-wrap">
-      <el-pagination
-        v-model:current-page="page"
-        :page-size="pageSize"
-        :total="total"
-        layout="prev, pager, next"
-        background
-        @current-change="fetchFoods"
-      />
-    </div>
+    <Pagination
+      v-model:page="page"
+      :total="total"
+      :page-size="pageSize"
+      @change="fetchFoods"
+    />
   </div>
 </template>
 
@@ -86,8 +77,9 @@ import { Search } from '@element-plus/icons-vue'
 import { getFoods, getFoodCategories } from '@/api'
 import FoodCard from '@/components/business/FoodCard.vue'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
-import BackButton from '@/components/common/BackButton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
+import Pagination from '@/components/common/Pagination.vue'
+import SortDropdown from '@/components/common/SortDropdown.vue'
 
 const loading = ref(true)
 const foods = ref([])
@@ -99,6 +91,12 @@ const sort = ref('view_count')
 const page = ref(1)
 const pageSize = 20
 const total = ref(0)
+
+const sortOptions = [
+  { label: '🔥 最热门', value: 'view_count' },
+  { label: '🕐 最新', value: 'created_at' },
+  { label: '💰 价格', value: 'price_range' },
+]
 
 async function fetchFoods() {
   loading.value = true
@@ -187,13 +185,6 @@ onMounted(() => {
 }
 
 /* Masonry is provided by global .masonry-container */
-
-.pagination-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--space-2xl);
-  padding-top: var(--space-xl);
-}
 
 @media (max-width: 639px) {
   .toolbar {

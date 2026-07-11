@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="food-list-page">
     <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
@@ -42,15 +42,7 @@
           <el-option label="菜品" value="dish" />
           <el-option label="店铺" value="shop" />
         </el-select>
-<<<<<<< HEAD
         <SortDropdown v-model="sort" :options="sortOptions" @change="fetchFoods" />
-=======
-        <el-select v-model="sort" style="width:130px" @change="fetchFoods">
-          <el-option label="🔥 最热门" value="view_count" />
-          <el-option label="🕐 最新" value="created_at" />
-          <el-option label="💰 价格" value="price_range" />
-        </el-select>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       </div>
     </div>
 
@@ -71,25 +63,12 @@
     </div>
 
     <!-- 分页 -->
-<<<<<<< HEAD
     <Pagination
       v-model:page="page"
       :total="total"
       :page-size="pageSize"
       @change="fetchFoods"
     />
-=======
-    <div v-if="total > pageSize" class="pagination-wrap">
-      <el-pagination
-        v-model:current-page="page"
-        :page-size="pageSize"
-        :total="total"
-        layout="prev, pager, next"
-        background
-        @current-change="fetchFoods"
-      />
-    </div>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   </div>
 </template>
 
@@ -99,15 +78,10 @@ import { Search } from '@element-plus/icons-vue'
 import { getFoods, getFoodCategories } from '@/api'
 import FoodCard from '@/components/business/FoodCard.vue'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
-<<<<<<< HEAD
 import EmptyState from '@/components/common/EmptyState.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import SortDropdown from '@/components/common/SortDropdown.vue'
 import BackButton from '@/components/common/BackButton.vue'
-=======
-import BackButton from '@/components/common/BackButton.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const loading = ref(true)
 const foods = ref([])
@@ -120,15 +94,12 @@ const page = ref(1)
 const pageSize = 20
 const total = ref(0)
 
-<<<<<<< HEAD
 const sortOptions = [
   { label: '🔥 最热门', value: 'view_count' },
   { label: '🕐 最新', value: 'created_at' },
   { label: '💰 价格', value: 'price_range' },
 ]
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 async function fetchFoods() {
   loading.value = true
   try {
@@ -217,8 +188,6 @@ onMounted(() => {
 
 /* Masonry is provided by global .masonry-container */
 
-<<<<<<< HEAD
-=======
 .pagination-wrap {
   display: flex;
   justify-content: center;
@@ -226,7 +195,6 @@ onMounted(() => {
   padding-top: var(--space-xl);
 }
 
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @media (max-width: 639px) {
   .toolbar {
     flex-direction: column;

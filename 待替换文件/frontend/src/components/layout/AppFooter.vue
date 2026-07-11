@@ -3,7 +3,7 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <span class="footer-logo">潮</span>
-        <span></span>
+        <span>潮汕文化宣传平台</span>
       </div>
       <p class="footer-copy">&copy; 2026 潮汕文化宣传平台</p>
     </div>
@@ -12,6 +12,7 @@
 
 <style scoped>
 .app-footer {
+  margin-top: var(--space-4xl);
   padding: var(--space-2xl) 0;
   border-top: 1px solid var(--el-border-color-light);
   background: var(--surface);

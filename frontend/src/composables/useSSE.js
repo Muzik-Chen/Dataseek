@@ -1,8 +1,7 @@
-import { ref } from 'vue'
+﻿import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useChatStore } from '@/stores/chat'
 
-<<<<<<< HEAD
 /**
  * 通用 SSE fetch 封装 — 读取流式响应并按事件类型分派回调。
  *
@@ -119,16 +118,12 @@ export async function streamFetch(url, body, callbacks = {}, opts = {}) {
   }
 }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 export function useSSE() {
   const isStreaming = ref(false)
   const error = ref(null)
   let abortController = null
 
   async function streamChat(sessionId, message, callbacks = {}) {
-<<<<<<< HEAD
-=======
     const {
       onToken = () => {},
       onDone = () => {},
@@ -142,13 +137,11 @@ export function useSSE() {
     } = callbacks
 
     const userStore = useUserStore()
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     const chatStore = useChatStore()
     abortController = new AbortController()
     isStreaming.value = true
     error.value = null
 
-<<<<<<< HEAD
     const base = import.meta.env.VITE_API_BASE || '/api/v1'
 
     try {
@@ -168,91 +161,12 @@ export function useSSE() {
       if (e.name !== 'AbortError') {
         error.value = e.message || '连接失败'
         callbacks.onError?.(error.value)
-=======
-    try {
-      const base = import.meta.env.VITE_API_BASE || '/api/v1'
-      const response = await fetch(`${base}/ai/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(userStore.token ? { Authorization: `Bearer ${userStore.token}` } : {}),
-        },
-        body: JSON.stringify({ session_id: sessionId || null, message }),
-        signal: abortController.signal,
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`)
-      }
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
-
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue
-          try {
-            const data = JSON.parse(line.slice(6))
-            switch (data.type) {
-              case 'token':
-                onToken(data.content)
-                break
-              case 'thinking':
-                onThinking(data.label)
-                break
-              case 'ask':
-                onAsk(data.question, data.options, data.intent, data.intents)
-                break
-              case 'trip_card':
-                onTripCard(data.plan)
-                break
-              case 'food_card':
-                onFoodCard(data.items, data.summary)
-                break
-              case 'heritage_card':
-                onHeritageCard(data.item)
-                break
-              case 'done':
-                chatStore.clearThinking()
-                if (data.intents?.length) {
-                  chatStore.setLastAssistantIntents(data.intents)
-                } else if (data.intent) {
-                  chatStore.setIntent(data.intent)
-                }
-                onDone(data.session_id)
-                break
-              case 'error':
-                onError(data.message || '未知错误')
-                break
-              case 'sources':
-                onSources(data.sources || [])
-                break
-            }
-          } catch {
-            // 忽略 JSON 解析错误
-          }
-        }
-      }
-    } catch (e) {
-      if (e.name !== 'AbortError') {
-        error.value = e.message || '连接失败'
-        onError(error.value)
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       }
     } finally {
       isStreaming.value = false
     }
   }
 
-<<<<<<< HEAD
   /**
    * SSE 流式行程规划 — 用于 TripCreate 页面。
    *
@@ -293,8 +207,6 @@ export function useSSE() {
     isStreaming.value = false
   }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   function abort() {
     if (abortController) {
       abortController.abort()
@@ -303,9 +215,5 @@ export function useSSE() {
     isStreaming.value = false
   }
 
-<<<<<<< HEAD
   return { isStreaming, error, streamChat, streamTripPlan, streamFetch, abort }
-=======
-  return { isStreaming, error, streamChat, abort }
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }

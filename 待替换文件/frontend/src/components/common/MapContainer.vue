@@ -570,7 +570,7 @@ watch(() => props.showTraffic, (val) => { renderTraffic(val) })
 .map-route-legend {
   position: absolute;
   bottom: 12px;
-  left: 12px;
+  right: 12px;
   z-index: 100;
   background: rgba(255, 255, 255, 0.92);
   border-radius: 10px;

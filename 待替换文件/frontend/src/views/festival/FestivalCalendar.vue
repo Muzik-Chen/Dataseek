@@ -1,6 +1,5 @@
 <template>
   <div class="festival-page">
-    <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
       <h1 class="display-text--section">🎊 民俗节日日历</h1>
@@ -40,16 +39,16 @@
 
     <!-- 活动时间线 -->
     <div v-else class="event-timeline">
-      <div v-for="event in events" :key="event.id" class="event-card" @click="$router.push(`/festival/${event.id}`)">
+      <div v-for="event in events" :key="event.id" class="event-card">
         <div class="event-date-badge">
-          <span class="date-day">{{ formatLunarMonth(event.lunar_date) }}</span>
-          <span class="date-month">{{ formatLunarDay(event.lunar_date) }}</span>
+          <span class="date-day">{{ formatDay(event.event_date) }}</span>
+          <span class="date-month">{{ formatMonth(event.event_date) }}</span>
         </div>
 
         <div class="event-body">
           <el-image
-            v-if="firstImageUrl(event.image_url)"
-            :src="firstImageUrl(event.image_url)"
+            v-if="event.image_url"
+            :src="event.image_url"
             fit="cover"
             class="event-thumb"
           />
@@ -57,7 +56,7 @@
             <h3>{{ event.name }}</h3>
             <p class="event-desc">{{ event.description?.slice(0, 120) || '暂无描述' }}</p>
             <div class="event-meta">
-              <span v-if="event.event_date">📅 {{ formatGregorian(event.event_date) }}</span>
+              <span v-if="event.lunar_date">🌙 {{ event.lunar_date }}</span>
               <span>📍 {{ event.region }}</span>
               <el-tag :type="eventTypeTag(event.event_type)" size="small">
                 {{ eventTypeLabel(event.event_type) }}
@@ -88,7 +87,6 @@ import { Search } from '@element-plus/icons-vue'
 import { getEvents } from '@/api'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
-import BackButton from '@/components/common/BackButton.vue'
 
 const loading = ref(true)
 const events = ref([])
@@ -104,22 +102,16 @@ const eventTypes = [
   { value: 'custom', label: '🏮 民俗' },
 ]
 
-function formatLunarDay(lunarDate) {
-  if (!lunarDate) return ''
-  const parts = lunarDate.split('月')
-  return parts.length > 1 ? parts[1] : lunarDate
-}
-
-function formatLunarMonth(lunarDate) {
-  if (!lunarDate) return ''
-  const parts = lunarDate.split('月')
-  return parts.length > 1 ? parts[0] + '月' : lunarDate
-}
-
-function formatGregorian(dateStr) {
+function formatDay(dateStr) {
   if (!dateStr) return ''
   const d = new Date(dateStr)
-  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
+  return d.getDate()
+}
+
+function formatMonth(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return `${d.getMonth() + 1}月`
 }
 
 function eventTypeLabel(type) {
@@ -128,16 +120,6 @@ function eventTypeLabel(type) {
 
 function eventTypeTag(type) {
   return { festival: 'danger', event: 'primary', custom: 'success' }[type] || 'info'
-}
-
-function firstImageUrl(imageUrl) {
-  if (!imageUrl) return ''
-  try {
-    const parsed = JSON.parse(imageUrl)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : imageUrl
-  } catch {
-    return imageUrl
-  }
 }
 
 async function fetchEvents() {
@@ -207,41 +189,17 @@ onMounted(() => fetchEvents())
 
 .event-card {
   display: flex;
-  align-items: center;
   gap: var(--space-lg);
   background: var(--surface);
   border-radius: 12px;
   padding: var(--space-lg);
   box-shadow: 0 2px 8px oklch(0 0 0 / 0.03);
-  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease,
-    padding 0.35s ease, background 0.5s ease;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-}
-
-.event-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--brand-red) 0%, #e8905c 50%, var(--brand-red) 100%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  z-index: -1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .event-card:hover {
-  transform: scale(1.06);
-  box-shadow: 0 12px 36px oklch(0 0 0 / 0.12);
-  z-index: 10;
-  padding-top: calc(var(--space-lg) * 1.3);
-  padding-bottom: calc(var(--space-lg) * 1.3);
-  background: linear-gradient(135deg, #fff 0%, #fff8f2 50%, #fff 100%);
-}
-
-.event-card:hover::before {
-  opacity: 0.08;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px oklch(0 0 0 / 0.08);
 }
 
 .event-date-badge {
@@ -262,7 +220,6 @@ onMounted(() => fetchEvents())
 
 .event-body {
   display: flex;
-  align-items: center;
   gap: var(--space-md);
   flex: 1;
   min-width: 0;

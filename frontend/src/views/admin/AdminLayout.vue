@@ -1,28 +1,10 @@
-<template>
+﻿<template>
   <div class="admin-layout">
-<<<<<<< HEAD
     <AdminSidebar
       :items="adminNavItems"
       :collapsed="sidebarCollapsed"
       @toggle="sidebarCollapsed = !sidebarCollapsed"
     />
-=======
-    <aside class="admin-sidebar" :class="{ collapsed: sidebarCollapsed }">
-      <div class="sidebar-brand">
-        <span class="brand-icon">🍵</span>
-        <span v-show="!sidebarCollapsed">管理后台</span>
-      </div>
-      <nav class="sidebar-nav">
-        <router-link v-for="item in navItems" :key="item.path" :to="item.path" class="nav-item" active-class="active">
-          <el-icon><component :is="item.icon" /></el-icon>
-          <span>{{ item.label }}</span>
-        </router-link>
-      </nav>
-      <div class="sidebar-footer">
-        <router-link to="/" class="back-link">← 返回前台</router-link>
-      </div>
-    </aside>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <main class="admin-main">
       <router-view />
     </main>
@@ -32,7 +14,6 @@
 <script setup>
 import { ref } from 'vue'
 import { DataBoard, User, Food, Collection, Calendar, ChatRound, TrendCharts, Setting } from '@element-plus/icons-vue'
-<<<<<<< HEAD
 import AdminSidebar from '@/components/layout/AdminSidebar.vue'
 
 const sidebarCollapsed = ref(false)
@@ -50,20 +31,6 @@ const adminNavItems = [
   { path: '/admin/posts',        label: '社区审核', icon: ChatRound },
   { path: '/admin/dashboard-data', label: '数据管理', icon: TrendCharts },
   { path: '/admin/settings',     label: '系统设置', icon: Setting },
-=======
-
-const sidebarCollapsed = ref(false)
-
-const navItems = [
-  { path: '/admin', label: '仪表盘', icon: DataBoard },
-  { path: '/admin/users', label: '用户管理', icon: User },
-  { path: '/admin/foods', label: '美食管理', icon: Food },
-  { path: '/admin/heritages', label: '非遗管理', icon: Collection },
-  { path: '/admin/events', label: '节日管理', icon: Calendar },
-  { path: '/admin/posts', label: '社区审核', icon: ChatRound },
-  { path: '/admin/dashboard-data', label: '数据管理', icon: TrendCharts },
-  { path: '/admin/settings', label: '系统设置', icon: Setting },
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 ]
 </script>
 
@@ -73,8 +40,6 @@ const navItems = [
   min-height: 100vh;
 }
 
-<<<<<<< HEAD
-=======
 .admin-sidebar {
   width: 240px;
   background: oklch(0.15 0.01 248);
@@ -147,7 +112,6 @@ const navItems = [
 
 .back-link:hover { color: #fff; }
 
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 .admin-main {
   flex: 1;
   background: var(--bg);
@@ -156,13 +120,6 @@ const navItems = [
 }
 
 @media (max-width: 768px) {
-<<<<<<< HEAD
-=======
-  .admin-sidebar { width: 64px; }
-  .sidebar-brand span:last-child,
-  .nav-item span,
-  .back-link { display: none; }
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   .admin-main { padding: 16px; }
 }
 </style>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="chat-page">
     <BackButton />
     <div class="chat-container">
@@ -98,7 +98,6 @@
                   <div v-if="!plan.error && plan.estimated_cost" class="trip-card-cost">
                     💰 预估人均：¥{{ plan.estimated_cost.total || '—' }}
                   </div>
-<<<<<<< HEAD
                   <!-- Phase 2: Enrichment 摘要 -->
                   <div v-if="plan.enrichment" class="trip-card-enrich">
                     <span v-if="plan.enrichment.weather?.length" class="enrich-badge weather">🌤️ {{ plan.enrichment.weather.length }}处天气</span>
@@ -107,8 +106,6 @@
                     <span v-if="plan.enrichment.hotels?.length" class="enrich-badge hotel">🏨 {{ plan.enrichment.hotels.length }}家酒店</span>
                     <span v-if="plan.enrichment.crowd?.length" class="enrich-badge crowd">👥 {{ plan.enrichment.crowd.length }}处人流</span>
                   </div>
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
                 </div>
               </div>
 
@@ -231,13 +228,8 @@ import { useRouter } from 'vue-router'
 import { Plus, Promotion } from '@element-plus/icons-vue'
 import { useChatStore, INTENT_CONFIG } from '@/stores/chat'
 import { useUserStore } from '@/stores/user'
-<<<<<<< HEAD
 import { getChatSession, getChatHistory } from '@/api'
 import BackButton from '@/components/common/BackButton.vue'
-=======
-import BackButton from '@/components/common/BackButton.vue'
-import { getChatSession, getChatHistory } from '@/api'
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const chatStore = useChatStore()
 const userStore = useUserStore()
@@ -313,6 +305,7 @@ async function switchSession(sid) {
   await scrollToBottom()
 }
 
+// 
 // ============ SSE AI 调用 ============
 async function sendToAI(userContent) {
   const sessionId = activeSession.value || chatStore.sessionId || ''
@@ -357,10 +350,7 @@ async function sendToAI(userContent) {
       foodItems: [],
       foodSummary: '',
       isStreaming: true,
-<<<<<<< HEAD
       enrichment: null,  // Phase 2: enrichment data by plan_id
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     }
     chatStore.messages.push(assistantMsg)
     streamingMessageId.value = msgId
@@ -432,7 +422,6 @@ async function sendToAI(userContent) {
               }
               break
 
-<<<<<<< HEAD
             // ── Phase 2: Route Enrichment Events ──
             case 'route_weather':
             case 'route_foods':
@@ -457,8 +446,6 @@ async function sendToAI(userContent) {
               break
             }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
             case 'ask':
               assistantMsg.content = data.question || assistantMsg.content
               assistantMsg._quickOptions = data.options || []
@@ -537,6 +524,7 @@ async function sendToAI(userContent) {
   }
 }
 
+// 
 // ============ 发送消息入口 ============
 async function sendMessage(text) {
   const content = (text || inputText.value).trim()
@@ -553,6 +541,7 @@ async function sendMessage(text) {
   }
 }
 
+// 
 // ============ 本地知识库（降级方案） ============
 function localReply(query) {
   const kb = {
@@ -816,7 +805,6 @@ async function scrollToBottom() {
   font-weight: 600;
 }
 
-<<<<<<< HEAD
 /* ── Phase 2: Enrichment Badges ── */
 .trip-card-enrich {
   display: flex;
@@ -838,8 +826,6 @@ async function scrollToBottom() {
 .enrich-badge.hotel { background: #E3F2FD; color: #1565C0; }
 .enrich-badge.crowd { background: #F3E5F5; color: #6A1B9A; }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 /* ====== 美食卡片 ====== */
 .food-cards {
   display: flex;

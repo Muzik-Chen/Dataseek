@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+﻿import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
 const routes = [
@@ -48,11 +48,7 @@ const routes = [
     path: '/trip/create',
     name: 'TripCreate',
     component: () => import('@/views/trip/TripCreate.vue'),
-<<<<<<< HEAD
     meta: { title: '创建行程', requiresAuth: true, fullMap: true },
-=======
-    meta: { title: '创建行程', requiresAuth: true },
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   },
   {
     path: '/trip/:id',

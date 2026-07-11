@@ -1,6 +1,5 @@
 <template>
   <div class="heritage-detail-page">
-    <BackButton />
     <LoadingSkeleton v-if="loading" type="detail" />
 
     <div v-else-if="error" class="error-state">
@@ -14,10 +13,11 @@
 
     <template v-else-if="heritage">
       <!-- 头图 -->
-      <div class="hero-image">
+      <div class="hero-image" @click="heritage.image_url && viewer.open([heritage.image_url])">
         <el-image v-if="heritage.image_url" :src="heritage.image_url" fit="cover" class="cover-img" />
         <div v-else class="cover-placeholder">🎭</div>
       </div>
+      <ImageViewer ref="viewer" />
 
       <div class="content-wrap">
         <div class="main-info">
@@ -69,19 +69,24 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
-import { getHeritageDetail, addFavorite, removeFavorite } from '@/api'
-import BackButton from '@/components/common/BackButton.vue'
+import { getHeritageDetail, addFavorite, removeFavorite, checkFavorite } from '@/api'
+import { useUserStore } from '@/stores/user'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
+import ImageViewer from '@/components/common/ImageViewer.vue'
 
 const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
 
+const viewer = ref(null)
 const heritage = ref(null)
 const loading = ref(true)
 const error = ref('')
 const isFavorited = ref(false)
+const favoriteId = ref(null)
 
 const levelTagType = {
   '国家级': 'danger',
@@ -95,6 +100,10 @@ async function fetchDetail() {
   try {
     heritage.value = await getHeritageDetail(route.params.id)
     document.title = `${heritage.value.name} - 潮汕文化宣传平台`
+    // 登录后检查收藏状态
+    if (userStore.isLoggedIn) {
+      await checkFavoriteStatus()
+    }
   } catch (e) {
     error.value = e.message || '加载失败'
   } finally {
@@ -102,15 +111,34 @@ async function fetchDetail() {
   }
 }
 
+async function checkFavoriteStatus() {
+  try {
+    const res = await checkFavorite({ item_type: 'heritage', item_id: heritage.value.id })
+    isFavorited.value = res.is_favorited
+    favoriteId.value = res.favorite_id
+  } catch {
+    // 未登录或检查失败时保持默认状态
+  }
+}
+
 async function toggleFavorite() {
+  // 未登录时引导登录
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录后再收藏')
+    router.push('/login')
+    return
+  }
+
   try {
     if (isFavorited.value) {
-      await removeFavorite(heritage.value.id)
+      await removeFavorite(favoriteId.value)
       isFavorited.value = false
+      favoriteId.value = null
       ElMessage.success('已取消收藏')
     } else {
-      await addFavorite({ item_type: 'heritage', item_id: heritage.value.id })
+      const res = await addFavorite({ item_type: 'heritage', item_id: heritage.value.id })
       isFavorited.value = true
+      favoriteId.value = res.id
       ElMessage.success('已收藏')
     }
   } catch (e) {

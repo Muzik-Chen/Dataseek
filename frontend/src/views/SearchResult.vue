@@ -1,10 +1,7 @@
-<template>
+﻿<template>
   <div class="search-page">
     <BackButton />
-<<<<<<< HEAD
-=======
 
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <div class="search-header">
       <div class="search-bar-wrap">
         <el-input
@@ -147,17 +144,10 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-<<<<<<< HEAD
 import { getFoods, getHeritages, getEvents } from '@/api'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import BackButton from '@/components/common/BackButton.vue'
-=======
-import BackButton from '@/components/common/BackButton.vue'
-import { getFoods, getHeritages, getEvents } from '@/api'
-import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const keyword = ref('')
 const searchedKeyword = ref('')

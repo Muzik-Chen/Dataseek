@@ -110,15 +110,74 @@
           <li v-for="tip in currentPlan.tips" :key="tip">{{ tip }}</li>
         </ul>
       </div>
+
+      <!-- 🆕 Phase 2: Enrichment 富化数据 -->
+      <div v-if="currentPlan?.enrichment" class="trip-enrichment">
+        <!-- 天气 -->
+        <div v-if="currentPlan.enrichment.weather?.length" class="trip-plan__section enrich-section">
+          <h4>🌤️ 沿途天气</h4>
+          <div class="enrich-chips">
+            <span v-for="w in currentPlan.enrichment.weather" :key="w.city" class="enrich-chip weather">
+              {{ w.city }} {{ w.temperature }}℃ {{ w.weather_desc }}
+            </span>
+          </div>
+        </div>
+        <!-- 周边美食 -->
+        <div v-if="currentPlan.enrichment.foods?.length" class="trip-plan__section enrich-section">
+          <h4>🍲 周边美食</h4>
+          <div class="enrich-chips">
+            <span v-for="f in currentPlan.enrichment.foods.slice(0, 6)" :key="f.food_id || f.name" class="enrich-chip food">
+              🍲 {{ f.name }}
+              <small v-if="f.distance_km">{{ f.distance_km.toFixed(1) }}km</small>
+            </span>
+          </div>
+        </div>
+        <!-- 周边非遗 -->
+        <div v-if="currentPlan.enrichment.heritages?.length" class="trip-plan__section enrich-section">
+          <h4>🏛️ 周边非遗</h4>
+          <div class="enrich-chips">
+            <span v-for="h in currentPlan.enrichment.heritages.slice(0, 6)" :key="h.id || h.name" class="enrich-chip heritage">
+              🏛️ {{ h.name }}
+              <small v-if="h.distance_km">{{ h.distance_km.toFixed(1) }}km</small>
+            </span>
+          </div>
+        </div>
+        <!-- 附近酒店 -->
+        <div v-if="currentPlan.enrichment.hotels?.length" class="trip-plan__section enrich-section">
+          <h4>🏨 附近酒店</h4>
+          <div class="enrich-chips">
+            <span v-for="h in currentPlan.enrichment.hotels.slice(0, 4)" :key="h.id || h.name" class="enrich-chip hotel">
+              🏨 {{ h.name }}
+              <small>{{ '⭐'.repeat(h.stars || 0) }} ¥{{ h.price_min || '—' }}/晚</small>
+            </span>
+          </div>
+        </div>
+        <!-- 人流 -->
+        <div v-if="currentPlan.enrichment.crowd?.length" class="trip-plan__section enrich-section">
+          <h4>👥 实时人流</h4>
+          <div class="enrich-chips">
+            <span v-for="c in currentPlan.enrichment.crowd" :key="c.location_name" class="enrich-chip crowd">
+              {{ crowdLevelEmoji(c.crowd_level) }} {{ c.location_name }}
+              <small>{{ c.crowd_level || '—' }} · {{ c.estimated_count || '—' }}人</small>
+            </span>
+          </div>
+        </div>
+      </div>
     </template>
 
     <!-- 操作栏 -->
     <div class="trip-card__actions">
-      <el-button type="primary" size="small" @click="$emit('save', currentPlan)" :disabled="!currentPlan">
+      <el-button type="primary" size="small" @click="$emit('save', currentPlan)" :disabled="!currentPlan || !savingEnabled">
         💾 保存到我的行程
       </el-button>
       <el-button size="small" @click="copyPlan">
         📋 复制
+      </el-button>
+      <el-button size="small" @click="$emit('refine', currentPlan)">
+        ✏️ 调整
+      </el-button>
+      <el-button size="small" @click="$emit('export', currentPlan)">
+        🖼️ 导出
       </el-button>
       <el-button size="small" @click="$emit('refresh')">
         🔄 换一换
@@ -128,14 +187,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   plans: { type: Array, default: () => [] },
+  savingEnabled: { type: Boolean, default: true },
+  /** 外部控制选中的方案 ID（地图图例 ↔ Tab 双向联动） */
+  activePlanId: { type: String, default: null },
 })
 
-defineEmits(['save', 'refresh'])
+const emit = defineEmits(['save', 'refresh', 'planChange', 'refine', 'export'])
 
 const activePlan = ref(props.plans[0]?.plan_id || 'A')
 const activeDays = ref(1)
@@ -144,12 +206,30 @@ const currentPlan = computed(() =>
   props.plans.find(p => p.plan_id === activePlan.value)
 )
 
+// Phase 3: 通知父组件方案切换，用于地图联动
+watch(activePlan, (newId) => {
+  const plan = props.plans.find(p => p.plan_id === newId)
+  if (plan) emit('planChange', plan)
+})
+
+// 外部控制同步（地图图例点击 → 切换 Tab）
+watch(() => props.activePlanId, (newId) => {
+  if (newId && newId !== activePlan.value) {
+    activePlan.value = newId
+  }
+})
+
 function typeIcon(type) {
   const map = {
     food: '🍲', scenery: '📸', culture: '🏛️',
     shopping: '🛍️', transport: '🚗', rest: '😴',
   }
   return map[type] || '📍'
+}
+
+function crowdLevelEmoji(level) {
+  const map = { '低': '🟢', '中': '🟡', '高': '🔴' }
+  return map[level] || '🔵'
 }
 
 function copyPlan() {
@@ -297,5 +377,63 @@ function copyPlan() {
   padding-top: var(--space-sm);
   border-top: 1px solid oklch(0 0 0 / 0.06);
   flex-wrap: wrap;
+}
+
+/* ── Phase 2: Enrichment 富化数据 ── */
+.trip-enrichment {
+  border-top: 1px solid oklch(0 0 0 / 0.06);
+  padding-top: var(--space-sm);
+}
+
+.enrich-section h4 {
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.enrich-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.enrich-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.enrich-chip small {
+  opacity: 0.7;
+  font-size: 10px;
+}
+
+.enrich-chip.weather {
+  background: oklch(0.55 0.14 160 / 0.1);
+  color: #276749;
+}
+
+.enrich-chip.food {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.enrich-chip.heritage {
+  background: #FFEBEE;
+  color: #C62828;
+}
+
+.enrich-chip.hotel {
+  background: #E3F2FD;
+  color: #1565C0;
+}
+
+.enrich-chip.crowd {
+  background: #F3E5F5;
+  color: #6A1B9A;
 }
 </style>

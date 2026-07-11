@@ -1,7 +1,5 @@
 <template>
   <div class="search-page">
-    <BackButton />
-
     <div class="search-header">
       <div class="search-bar-wrap">
         <el-input
@@ -144,7 +142,6 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import BackButton from '@/components/common/BackButton.vue'
 import { getFoods, getHeritages, getEvents } from '@/api'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'

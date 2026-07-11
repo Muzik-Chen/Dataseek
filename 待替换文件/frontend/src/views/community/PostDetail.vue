@@ -1,6 +1,5 @@
 <template>
   <div class="post-detail-page">
-    <BackButton />
     <LoadingSkeleton v-if="loading" type="detail" />
 
     <div v-else-if="error" class="error-state">
@@ -36,10 +35,10 @@
             :src="img"
             fit="cover"
             class="detail-img"
-            :preview-src-list="post.images"
-            :initial-index="i"
+            @click="viewer.open(post.images, i)"
           />
         </div>
+        <ImageViewer ref="viewer" />
 
         <div v-if="post.tags?.length" class="post-tags">
           <el-tag v-for="tag in post.tags" :key="tag" round>{{ tag }}</el-tag>
@@ -112,11 +111,12 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { getPostDetail, getComments, createComment, likePost, unlikePost } from '@/api'
-import BackButton from '@/components/common/BackButton.vue'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
+import ImageViewer from '@/components/common/ImageViewer.vue'
 
 const route = useRoute()
 
+const viewer = ref(null)
 const post = ref(null)
 const comments = ref([])
 const commentText = ref('')

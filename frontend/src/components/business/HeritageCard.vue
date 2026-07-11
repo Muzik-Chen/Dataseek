@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <!-- 印章善本卡片 -->
   <article v-if="item" class="heritage-card" @click="goDetail">
     <!-- 印章角标 -->
@@ -15,10 +15,7 @@
           :alt="item.name"
           class="heritage-card__img"
           loading="lazy"
-<<<<<<< HEAD
           @error="(e) => { e.target.style.display = 'none' }"
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         />
         <span v-else class="heritage-card__placeholder">🎭</span>
       </div>
@@ -57,11 +54,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-<<<<<<< HEAD
 const props = defineProps({
-=======
-defineProps({
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   item: { type: Object, default: null },
 })
 
@@ -70,13 +63,8 @@ defineEmits(['favorite'])
 const router = useRouter()
 
 function goDetail() {
-<<<<<<< HEAD
   if (props.item?.id) {
     router.push(`/heritages/${props.item.id}`)
-=======
-  if (item?.id) {
-    router.push(`/heritages/${item.id}`)
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   }
 }
 

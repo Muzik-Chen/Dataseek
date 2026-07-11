@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="home-page">
     <!-- ===== Hero · 全屏轮播 · 品牌认知 ===== -->
     <section
@@ -409,9 +409,20 @@ const MOCK_HERITAGES = [
 </script>
 
 <style scoped>
-/* ==========================================
+/* 
+
+
+
+
+
    Hero · 全屏轮播 · 嵌瓷收边 · 品牌认知优先
-   ========================================== */
+   
+
+
+
+
+
+ */
 .hero-section {
   position: relative;
   width: 100vw;
@@ -633,9 +644,20 @@ const MOCK_HERITAGES = [
   50% { transform: rotate(45deg) translateY(6px); opacity: 1; }
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    智慧出行 · 探索地图
-   ========================================== */
+   
+
+
+
+
+
+ */
 .map-section {
   margin-bottom: var(--space-3xl);
 }
@@ -656,9 +678,20 @@ const MOCK_HERITAGES = [
   }
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    内容背景区 · 潮汕风景照（层1 — 最亮的暖色底）
-   ========================================== */
+   
+
+
+
+
+
+ */
 .content-with-bg {
   position: relative;
   margin-left: calc(-50vw + 50%);
@@ -695,9 +728,20 @@ const MOCK_HERITAGES = [
   padding: var(--space-xl);
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    AI 横幅 · 紧凑琥珀 accent
-   ========================================== */
+   
+
+
+
+
+
+ */
 .ai-section {
   margin-bottom: var(--space-3xl);
   margin-top: var(--space-2xl);
@@ -806,9 +850,20 @@ const MOCK_HERITAGES = [
   font-family: var(--font-display);
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    Section Header · 编辑感标题
-   ========================================== */
+   
+
+
+
+
+
+ */
 .section-header {
   display: flex;
   align-items: baseline;
@@ -844,9 +899,20 @@ const MOCK_HERITAGES = [
 .more-arrow { transition: transform 0.25s ease; }
 .section-more:hover .more-arrow { transform: translateX(3px); }
 
-/* ==========================================
+/* 
+
+
+
+
+
    Category Grid · 图片目的地卡片 3×2
-   ========================================== */
+   
+
+
+
+
+
+ */
 .category-section {
   margin-bottom: var(--space-3xl);
 }
@@ -921,9 +987,20 @@ const MOCK_HERITAGES = [
   margin-bottom: var(--space-lg);
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    Feed Sections · 精选大卡 + 网格布局
-   ========================================== */
+   
+
+
+
+
+
+ */
 .feed-section {
   margin-bottom: var(--space-3xl);
 }
@@ -969,9 +1046,20 @@ const MOCK_HERITAGES = [
   margin: 0;
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    Festival Teaser · 活动时间线卡片
-   ========================================== */
+   
+
+
+
+
+
+ */
 .festival-teaser {
   margin-bottom: 0;
   padding-bottom: var(--space-2xl);
@@ -1062,9 +1150,20 @@ const MOCK_HERITAGES = [
   color: var(--primary);
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    Responsive
-   ========================================== */
+   
+
+
+
+
+
+ */
 @media (max-width: 1023px) {
   .hero-section {
     height: calc(100vh - 56px);
@@ -1276,9 +1375,20 @@ const MOCK_HERITAGES = [
   }
 }
 
-/* ==========================================
+/* 
+
+
+
+
+
    Motion respect
-   ========================================== */
+   
+
+
+
+
+
+ */
 @media (prefers-reduced-motion: reduce) {
   .hero-slide { transition: none; }
   .scroll-arrow { animation: none; }

@@ -37,7 +37,9 @@ api.interceptors.response.use(
       useUserStore().logout()
       window.location.href = '/login'
     }
-    return Promise.reject(error)
+    // 提取后端返回的错误详情
+    const detail = error.response?.data?.detail
+    return Promise.reject(detail ? new Error(detail) : error)
   }
 )
 

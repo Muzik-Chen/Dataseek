@@ -54,6 +54,7 @@ import { ref } from 'vue'
 import { Plus, Delete } from '@element-plus/icons-vue'
 import { toast } from '@/utils/toast'
 import { validateFileSize, validateImageType } from '@/utils/validators'
+import api from '@/api/request'
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
@@ -93,10 +94,40 @@ async function handleFiles(e) {
       continue
     }
 
-    // 本地预览（实际项目中应上传到服务器获取 URL）
-    const localUrl = URL.createObjectURL(file)
-    const newUrls = [...props.modelValue, localUrl]
+    // 先插入占位 URL 用于显示上传进度
+    const placeholderIdx = props.modelValue.length
+    const newUrls = [...props.modelValue, '']
     emit('update:modelValue', newUrls)
+
+    try {
+      uploading.value[placeholderIdx] = true
+      progress.value[placeholderIdx] = 0
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (event) => {
+          if (event.total) {
+            progress.value[placeholderIdx] = Math.round((event.loaded / event.total) * 100)
+          }
+        },
+      })
+
+      // 替换占位 URL 为真实 URL
+      const uploadedUrls = [...props.modelValue]
+      uploadedUrls[placeholderIdx] = response.url
+      emit('update:modelValue', uploadedUrls)
+    } catch (e) {
+      // 上传失败，移除占位
+      const cleanedUrls = props.modelValue.filter((_, i) => i !== placeholderIdx)
+      emit('update:modelValue', cleanedUrls)
+      toast.error(e.message || '上传失败')
+    } finally {
+      delete uploading.value[placeholderIdx]
+      delete progress.value[placeholderIdx]
+    }
   }
 }
 
