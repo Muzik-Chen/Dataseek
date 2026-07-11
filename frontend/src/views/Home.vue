@@ -1,7 +1,12 @@
 <template>
   <div class="home-page">
-    <!-- ===== Hero · 品牌认知 · 嵌瓷收边 ===== -->
-    <section class="hero-section" aria-label="品牌介绍">
+    <!-- ===== Hero · 全屏轮播 · 品牌认知 ===== -->
+    <section
+      class="hero-section"
+      aria-label="品牌介绍"
+      @touchstart.passive="onTouchStart"
+      @touchend.passive="onTouchEnd"
+    >
       <div class="hero-carousel">
         <div
           v-for="(slide, idx) in heroSlides"
@@ -11,15 +16,16 @@
           :style="{ backgroundImage: `url(${slide.image})` }"
         >
           <div class="hero-overlay"></div>
+          <div class="hero-slide-caption">
+            <h2 class="slide-caption-title">{{ slide.title }}</h2>
+            <p class="slide-caption-desc">{{ slide.desc }}</p>
+          </div>
         </div>
       </div>
       <div class="hero-content">
         <span class="hero-kicker">潮汕文化一站式服务平台</span>
         <h1 class="hero-title display-text--hero">探索潮汕<br>从舌尖到非遗</h1>
         <p class="hero-sub">AI智能规划 · 美食偏好推荐 · 文化知识问答</p>
-        <div class="hero-search">
-          <SearchBar @search="onHeroSearch" />
-        </div>
         <div class="hero-tags">
           <button
             v-for="tag in hotTags"
@@ -40,33 +46,16 @@
           :aria-label="`第${idx + 1}张`"
         />
       </div>
-    </section>
-
-    <!-- ===== AI 导览 · 紧凑横幅 ===== -->
-    <section class="ai-section" aria-label="AI功能">
-      <div class="ai-banner">
-        <div class="ai-text">
-          <h2 class="ai-title">AI 潮小助</h2>
-          <p class="ai-desc">基于大语言模型的智能向导——听懂你的口味偏好，规划专属行程，解答潮汕文化的一切好奇。</p>
-          <div class="ai-actions">
-            <router-link to="/chat" class="ai-btn ai-btn-primary">
-              <el-icon><ChatDotRound /></el-icon>
-              开始对话
-            </router-link>
-            <router-link to="/trip/create" class="ai-btn ai-btn-secondary">
-              <el-icon><Guide /></el-icon>
-              智能规划行程
-            </router-link>
-          </div>
-        </div>
-        <div class="ai-visual" aria-hidden="true">
-          <span class="ai-char">潮</span>
-        </div>
+      <!-- 向下滚动提示 -->
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <span class="scroll-arrow"></span>
       </div>
     </section>
 
-    <!-- ===== 分类导航 · 不对称网格 ===== -->
-    <section class="category-section" aria-label="分类导航">
+    <!-- ===== 以下内容区 · 潮汕风景照背景 ===== -->
+    <div class="content-with-bg">
+      <!-- ===== 分类导航 · 不对称网格 ===== -->
+      <section class="category-section" aria-label="分类导航">
       <div class="section-header">
         <h2 class="section-title display-text--section">
           <span class="title-accent">探索</span>潮汕
@@ -91,7 +80,7 @@
     </section>
 
     <!-- ===== 热门美食 · 精选大卡 + 网格 ===== -->
-    <section class="feed-section" aria-label="热门美食">
+    <section class="feed-section feed-section--foods" aria-label="热门美食">
       <div class="section-header">
         <h2 class="section-title display-text--section">
           <span class="title-accent">热门</span>美食
@@ -118,7 +107,7 @@
     </section>
 
     <!-- ===== 热门非遗 · 精选大卡 + 网格 ===== -->
-    <section class="feed-section" aria-label="热门非遗">
+    <section class="feed-section feed-section--heritages" aria-label="热门非遗">
       <div class="section-header">
         <h2 class="section-title display-text--section">
           <span class="title-accent">热门</span>非遗
@@ -176,27 +165,31 @@
       </div>
     </section>
 
-    <!-- ===== 探索地图 · 精选数据 ===== -->
-    <section class="home-map-section" aria-label="探索地图">
-      <div class="home-map-overlay">
-        <h2 class="display-text--section">发现潮汕之美</h2>
-        <p>在地图上探索地道美食、非遗传承、民俗节庆</p>
-        <el-button type="primary" size="large" @click="$router.push('/trip/create')">
-          定制我的行程 →
-        </el-button>
+    <!-- ===== 智慧出行 · 探索地图 ===== -->
+    <section class="map-section" aria-label="智慧出行">
+      <div class="section-header">
+        <h2 class="section-title display-text--section">
+          <span class="title-accent">智慧</span>出行
+        </h2>
+        <router-link to="/trip/create" class="section-more">
+          定制行程 <el-icon class="more-arrow"><ArrowRight /></el-icon>
+        </router-link>
       </div>
-      <MapContainer
-        height="450px"
-        :center="discoveryMapData.center"
-        :zoom="11"
-        :markers="discoveryMapData.markers"
-        :heatmapData="discoveryMapData.heatmapData"
-        :enableZoomFilter="true"
-        :enableHoverInfo="true"
-        :heatmapMinZoom="15"
-        :interactive="true"
-      />
+      <div class="map-section-inner">
+        <MapContainer
+          height="480px"
+          :center="discoveryMapData.center"
+          :zoom="11"
+          :markers="discoveryMapData.markers"
+          :heatmapData="discoveryMapData.heatmapData"
+          :enableZoomFilter="true"
+          :enableHoverInfo="true"
+          :heatmapMinZoom="15"
+          :interactive="true"
+        />
+      </div>
     </section>
+    </div><!-- /content-with-bg -->
   </div>
 </template>
 
@@ -217,20 +210,28 @@ import { heritageApi } from '@/api/heritage'
 import { hotelApi } from '@/api/hotel'
 import { dashboardApi } from '@/api/dashboard'
 import { platformDataToMapData } from '@/utils/mapAdapter'
+import { useMusic } from '@/composables/useMusic'
 
 const router = useRouter()
+const { init: initMusic } = useMusic()
 
 // --- Hero ---
 const currentHero = ref(0)
 const heroSlides = [
   {
     image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1400&h=700&fit=crop',
+    title: '潮汕美食',
+    desc: '牛肉火锅、生腌海鲜、粿品小吃——舌尖上的潮汕，是千年闽粤文化的味觉沉淀，每一口都是时光的馈赠。',
   },
   {
     image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1400&h=700&fit=crop',
+    title: '非遗传承',
+    desc: '英歌舞的豪迈、工夫茶的从容、潮剧的婉转——这些活着的文化遗产，至今仍在潮汕大地上生生不息。',
   },
   {
     image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1400&h=700&fit=crop',
+    title: '岁时节庆',
+    desc: '营老爷巡游、元宵灯会、端午赛龙舟——潮汕人用最热烈的方式，守护着一方水土的信仰与温情。',
   },
 ]
 
@@ -244,13 +245,36 @@ function onHeroSearch(keyword) {
 
 // Auto-rotate hero
 let heroTimer = null
-onMounted(() => {
+
+// ── 触摸滑动 ──
+let touchStartX = 0
+let touchStartY = 0
+
+function onTouchStart(e) {
+  touchStartX = e.touches[0].clientX
+  touchStartY = e.touches[0].clientY
+}
+
+function onTouchEnd(e) {
+  const dx = e.changedTouches[0].clientX - touchStartX
+  const dy = e.changedTouches[0].clientY - touchStartY
+  // 水平滑动超过 50px 且大于垂直滑动
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+    if (dx < 0) {
+      currentHero.value = (currentHero.value + 1) % heroSlides.length
+    } else {
+      currentHero.value = (currentHero.value - 1 + heroSlides.length) % heroSlides.length
+    }
+    resetHeroTimer()
+  }
+}
+
+function resetHeroTimer() {
+  clearInterval(heroTimer)
   heroTimer = setInterval(() => {
     currentHero.value = (currentHero.value + 1) % heroSlides.length
   }, 4000)
-})
-
-onUnmounted(() => clearInterval(heroTimer))
+}
 
 // ── 探索地图（精选推荐数据）──
 const discoveryData = reactive({
@@ -358,7 +382,11 @@ onMounted(() => {
   loadFoods()
   loadHeritages()
   loadDiscoveryMap()
+  initMusic()
+  resetHeroTimer()
 })
+
+onUnmounted(() => clearInterval(heroTimer))
 
 // --- Mock data ---
 const MOCK_FOODS = [
@@ -382,12 +410,14 @@ const MOCK_HERITAGES = [
 
 <style scoped>
 /* ==========================================
-   Hero · 嵌瓷收边 · 品牌认知优先
+   Hero · 全屏轮播 · 嵌瓷收边 · 品牌认知优先
    ========================================== */
 .hero-section {
   position: relative;
-  height: 520px;
-  border-radius: 20px 20px 0 0;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  height: calc(100vh - 60px);
   overflow: hidden;
   margin-bottom: 0;
 }
@@ -419,6 +449,48 @@ const MOCK_HERITAGES = [
     oklch(0.22 0.04 30 / 0.40) 50%,
     oklch(0.12 0.02 60 / 0.55) 100%
   );
+}
+
+/* 轮播图左下角文字说明 · 占屏约 1/4 */
+.hero-slide-caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 25vh;
+  min-height: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 8vw 5vh 8vw;
+  z-index: 3;
+  background: linear-gradient(
+    to top,
+    oklch(0.08 0.02 20 / 0.65) 0%,
+    oklch(0.10 0.02 25 / 0.30) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.slide-caption-title {
+  font-size: clamp(1.3rem, 2.5vw, 2.2rem);
+  font-weight: var(--fw-black, 800);
+  color: oklch(1 0 0 / 0.95);
+  margin: 0 0 8px;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-shadow: 0 2px 12px oklch(0 0 0 / 0.5);
+}
+
+.slide-caption-desc {
+  font-size: clamp(0.82rem, 1.2vw, 1.02rem);
+  color: oklch(1 0 0 / 0.78);
+  margin: 0;
+  line-height: 1.7;
+  max-width: 600px;
+  text-shadow: 0 1px 6px oklch(0 0 0 / 0.4);
+  text-wrap: balance;
 }
 
 /* 嵌瓷色条 — Hero 底部收边 */
@@ -472,12 +544,6 @@ const MOCK_HERITAGES = [
   max-width: 480px;
 }
 
-.hero-search {
-  width: 100%;
-  max-width: 440px;
-  margin-bottom: var(--space-md);
-}
-
 .hero-tags {
   display: flex;
   gap: var(--space-sm);
@@ -524,6 +590,7 @@ const MOCK_HERITAGES = [
   cursor: pointer;
   padding: 0;
   transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .hero-dot.active {
@@ -532,74 +599,100 @@ const MOCK_HERITAGES = [
   transform: scale(1.2);
 }
 
+/* 移动端放大触摸区域 */
+@media (max-width: 767px) {
+  .hero-dot {
+    width: 12px;
+    height: 12px;
+    padding: 8px;
+    background-clip: content-box;
+  }
+}
+
+/* Hero 向下滚动提示 */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.scroll-arrow {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-right: 2px solid oklch(1 0 0 / 0.6);
+  border-bottom: 2px solid oklch(1 0 0 / 0.6);
+  transform: rotate(45deg);
+  animation: hero-scroll-bounce 2s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.6; }
+  50% { transform: rotate(45deg) translateY(6px); opacity: 1; }
+}
+
 /* ==========================================
-   探索地图 · Hero 地图
+   智慧出行 · 探索地图
    ========================================== */
-.home-map-section {
-  position: relative;
-  margin-top: var(--space-2xl);
+.map-section {
   margin-bottom: var(--space-3xl);
+}
+
+.map-section-inner {
   border-radius: var(--radius-xl, 16px);
   overflow: hidden;
   box-shadow: var(--shadow-md, 0 4px 16px oklch(0.15 0.02 25 / 0.08));
 }
 
-.home-map-overlay {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 10;
-  max-width: 340px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 14px;
-  padding: 20px 24px;
-  box-shadow: 0 4px 20px oklch(0.15 0.02 25 / 0.12);
-}
-
-.home-map-overlay h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--ink, #1a1a1a);
-  margin: 0 0 6px;
-  font-family: var(--font-display, 'Noto Serif SC', serif);
-}
-
-.home-map-overlay p {
-  font-size: 0.85rem;
-  color: var(--muted, #999);
-  margin: 0 0 14px;
-  line-height: 1.4;
-}
-
-.home-map-overlay .el-button {
-  font-weight: 600;
-}
-
 @media (max-width: 768px) {
-  .home-map-section {
-    border-radius: var(--radius-lg, 12px);
-    margin-top: var(--space-lg);
+  .map-section {
     margin-bottom: var(--space-2xl);
   }
 
-  .home-map-overlay {
-    top: 12px;
-    left: 12px;
-    right: 12px;
-    max-width: none;
-    padding: 14px 18px;
-    border-radius: 10px;
+  .map-section-inner {
+    border-radius: var(--radius-lg, 12px);
   }
+}
 
-  .home-map-overlay h2 {
-    font-size: 1rem;
-  }
+/* ==========================================
+   内容背景区 · 潮汕风景照（层1 — 最亮的暖色底）
+   ========================================== */
+.content-with-bg {
+  position: relative;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding-left: calc(50vw - 50% + 45px);
+  padding-right: calc(50vw - 50% + 45px);
+  padding-top: var(--space-2xl);
+  padding-bottom: 0;
+  background: var(--bg-page);
+}
 
-  .home-map-overlay p {
-    font-size: 0.78rem;
-  }
+/* 内容区内各 section 全宽铺满 */
+.content-with-bg > section {
+  width: 100%;
+}
+
+/* ── 各板块微妙区分 ── */
+/* 分类导航 — 无额外底色，利用最外层亮底 */
+.category-section {
+  position: relative;
+}
+
+/* 美食板块 — 食物暖色微染 */
+.feed-section--foods {
+  background: linear-gradient(180deg, oklch(0.95 0.018 80 / 0.45) 0%, oklch(0.93 0.022 78 / 0.35) 100%);
+  border-radius: var(--radius-xl, 16px);
+  padding: var(--space-xl);
+}
+
+/* 非遗板块 — 深沉文化暖色微染 */
+.feed-section--heritages {
+  background: linear-gradient(180deg, oklch(0.92 0.022 75 / 0.50) 0%, oklch(0.89 0.028 70 / 0.40) 100%);
+  border-radius: var(--radius-xl, 16px);
+  padding: var(--space-xl);
 }
 
 /* ==========================================
@@ -880,7 +973,8 @@ const MOCK_HERITAGES = [
    Festival Teaser · 活动时间线卡片
    ========================================== */
 .festival-teaser {
-  margin-bottom: var(--space-2xl);
+  margin-bottom: 0;
+  padding-bottom: var(--space-2xl);
 }
 
 .festival-teaser-inner {
@@ -973,8 +1067,22 @@ const MOCK_HERITAGES = [
    ========================================== */
 @media (max-width: 1023px) {
   .hero-section {
-    height: 420px;
-    border-radius: 16px;
+    height: calc(100vh - 56px);
+  }
+
+  /* 平板：缩小 caption 高度 */
+  .hero-slide-caption {
+    height: 20vh;
+    padding: 0 6vw 3vh 6vw;
+  }
+
+  .slide-caption-title {
+    font-size: clamp(1.1rem, 2vw, 1.6rem);
+  }
+
+  .slide-caption-desc {
+    font-size: clamp(0.75rem, 1vw, 0.9rem);
+    max-width: 480px;
   }
 
   .category-grid {
@@ -1001,36 +1109,104 @@ const MOCK_HERITAGES = [
 
   .feed-featured {
     grid-column: span 2;
-    grid-row: span 1;
+    grid-row: span 2;
   }
 }
 
 @media (max-width: 767px) {
   .hero-section {
-    height: 400px;
-    border-radius: 12px;
+    height: 100vh;
+    height: 100dvh;
+    /* iPhone 刘海 / 灵动岛安全区 */
+    padding-top: env(safe-area-inset-top);
   }
 
+  /* 横屏手机：限制最大高度，防止轮播过高 */
+  @media (orientation: landscape) {
+    .hero-section {
+      height: auto;
+      min-height: 100dvh;
+    }
+
+    .hero-content {
+      padding: max(12dvh, 60px) 5vw var(--space-xl);
+    }
+  }
+
+  /* 中间主文案：上移以避免与底部说明重叠 */
   .hero-content {
-    padding: var(--space-lg);
+    justify-content: flex-start;
+    padding: 18vh 5vw 0;
+    height: 100%;
   }
 
   .hero-kicker {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     margin-bottom: var(--space-sm);
+    letter-spacing: 0.1em;
   }
 
   .hero-title {
-    font-size: 1.8rem;
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+    margin-bottom: var(--space-sm);
+    line-height: 1.25;
   }
 
   .hero-sub {
-    font-size: 0.9rem;
+    font-size: 0.82rem;
+    margin-bottom: var(--space-lg);
+    max-width: 320px;
+    line-height: 1.4;
+  }
+
+  .hero-tags {
+    gap: 6px;
   }
 
   .hero-tag {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     padding: 4px 12px;
+  }
+
+  /* 底部说明：自适应高度，不再固定 25vh */
+  .hero-slide-caption {
+    height: auto;
+    min-height: unset;
+    padding: 16px 5vw 20px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(
+      to top,
+      oklch(0.08 0.02 20 / 0.75) 0%,
+      oklch(0.10 0.02 25 / 0.35) 55%,
+      transparent 100%
+    );
+  }
+
+  .slide-caption-title {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .slide-caption-desc {
+    font-size: 0.76rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  /* 轮播圆点：移到说明文字上方 */
+  .hero-dots {
+    bottom: auto;
+    top: calc(100% - 80px);
+  }
+
+  /* 隐藏滚动提示箭头 */
+  .hero-scroll-hint {
+    display: none;
   }
 
   .category-grid {
@@ -1088,7 +1264,7 @@ const MOCK_HERITAGES = [
 
   .feed-featured {
     grid-column: span 1;
-    grid-row: span 1;
+    grid-row: span 2;
   }
 
   .festival-teaser-inner {
@@ -1105,6 +1281,7 @@ const MOCK_HERITAGES = [
    ========================================== */
 @media (prefers-reduced-motion: reduce) {
   .hero-slide { transition: none; }
+  .scroll-arrow { animation: none; }
   .cat-card, .festival-card, .ai-btn { transition: none; }
   .more-arrow { transition: none; }
 }

@@ -1,16 +1,16 @@
 <template>
   <div id="chaoshan-app" :class="{ 'no-header-footer': hideLayout }">
     <AppHeader v-if="!hideLayout && !isAdminRoute" @toggle-search="searchVisible = true" />
-    <main class="main-content" :class="{ 'main-content--full': isFullMap }">
+    <main class="main-content">
       <router-view v-slot="{ Component }">
         <transition name="page-fade" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
     </main>
-    <AppFooter v-if="!hideLayout && !isAdminRoute && !isFullMap" />
+    <AppFooter v-if="!hideLayout && !isAdminRoute" />
     <!-- 全局组件 -->
-    <ChatWidget v-if="!isAdminRoute && !isFullMap && route.path !== '/chat'" />
+    <ChatWidget v-if="!isAdminRoute && route.path !== '/chat'" />
     <SearchOverlay v-model="searchVisible" />
   </div>
 </template>
@@ -29,11 +29,10 @@ const searchVisible = ref(false)
 
 const hideLayout = computed(() => {
   const path = route.path
-  return path.startsWith('/login') || path.startsWith('/register') || path.startsWith('/admin')
+  return path.startsWith('/admin')
 })
 
 const isAdminRoute = computed(() => route.path.startsWith('/admin'))
-const isFullMap = computed(() => route.meta.fullMap)
 </script>
 
 <style>
@@ -46,26 +45,12 @@ const isFullMap = computed(() => route.meta.fullMap)
 .main-content {
   flex: 1;
   width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-  /* 极淡纸纹 — 用品牌琥珀色在 2% 透明度模拟宣纸质感 */
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      oklch(0.75 0.06 75 / 0.015) 2px,
-      oklch(0.75 0.06 75 / 0.015) 4px
-    );
+  margin: 0;
+  padding: 0 var(--space-sm);
+  background: var(--bg-page);
 }
 
 #chaoshan-app.no-header-footer .main-content {
-  max-width: none;
-  padding: 0;
-}
-
-.main-content--full {
   max-width: none;
   padding: 0;
 }
@@ -79,4 +64,6 @@ const isFullMap = computed(() => route.meta.fullMap)
 .page-fade-leave-to {
   opacity: 0;
 }
+
+
 </style>
