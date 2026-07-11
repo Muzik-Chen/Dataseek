@@ -1,9 +1,9 @@
-"""
-数据大屏路由 — 天气/人流/平台概览。
-"""
+"""数据大屏路由 — 天气/人流/平台概览。"""
+
+from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import select, func, desc
+from sqlalchemy import select, func, desc, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
@@ -53,6 +53,45 @@ async def get_crowd(
     rows = (await db.execute(q)).scalars().all()
     items = [CrowdOut.model_validate(r).model_dump() for r in rows]
     return success(items)
+
+
+@router.get("/crowd/history")
+async def get_crowd_history(
+    days: int = Query(7, ge=1, le=90, description="统计天数"),
+    region: str | None = Query(None, description="区域筛选（汕头/潮州/揭阳/汕尾）"),
+    db: AsyncSession = Depends(get_db),
+):
+    """按天聚合人流趋势 — 返回每日平均/最高人流等级和总预估人数。"""
+    where_clause = "WHERE record_time >= DATE_SUB(CURDATE(), INTERVAL :days DAY)"
+    params = {"days": days}
+    if region:
+        where_clause += " AND region = :region"
+        params["region"] = region
+
+    sql = text(f"""
+        SELECT
+            DATE(record_time) AS date,
+            ROUND(AVG(crowd_level), 1) AS avg_level,
+            MAX(crowd_level) AS max_level,
+            SUM(estimated_count) AS total_count
+        FROM crowd_records
+        {where_clause}
+        GROUP BY DATE(record_time)
+        ORDER BY date ASC
+    """)
+
+    result = await db.execute(sql, params)
+    rows = result.fetchall()
+
+    return success([
+        {
+            "date": str(r[0]),
+            "avg_level": float(r[1]) if r[1] is not None else 0.0,
+            "max_level": r[2] or 0,
+            "total_count": r[3] or 0,
+        }
+        for r in rows
+    ])
 
 
 @router.get("/overview")

@@ -66,7 +66,8 @@ CREATE TABLE IF NOT EXISTS foods (
     address VARCHAR(255) DEFAULT '',
     latitude DECIMAL(10,7) DEFAULT NULL,
     longitude DECIMAL(10,7) DEFAULT NULL,
-    price_range VARCHAR(20) DEFAULT '',
+    price_range VARCHAR(50) DEFAULT '',
+    rating DECIMAL(2,1) DEFAULT NULL,
     tags JSON DEFAULT NULL,
     is_recommended BOOL DEFAULT FALSE,
     view_count INT DEFAULT 0,
@@ -289,17 +290,43 @@ CREATE TABLE IF NOT EXISTS crowd_locations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- 兼容已有数据库的增量 DDL（若列已存在则忽略错误）
+-- 兼容已有数据库的增量 DDL（MySQL 8.0 兼容存储过程）
 -- ============================================================
 
+DROP PROCEDURE IF EXISTS add_column_if_not_exists;
+
+DELIMITER //
+CREATE PROCEDURE add_column_if_not_exists(
+    IN tbl_name VARCHAR(64),
+    IN col_name VARCHAR(64),
+    IN col_def TEXT
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = tbl_name
+          AND COLUMN_NAME = col_name
+    ) THEN
+        SET @sql = CONCAT('ALTER TABLE ', tbl_name, ' ADD COLUMN ', col_name, ' ', col_def);
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    END IF;
+END //
+DELIMITER ;
+
 -- heritages 表新增地理坐标字段
-ALTER TABLE heritages
-    ADD COLUMN IF NOT EXISTS latitude DECIMAL(10,7) DEFAULT NULL,
-    ADD COLUMN IF NOT EXISTS longitude DECIMAL(10,7) DEFAULT NULL,
-    ADD COLUMN IF NOT EXISTS address VARCHAR(255) DEFAULT '';
+CALL add_column_if_not_exists('heritages', 'latitude', 'DECIMAL(10,7) DEFAULT NULL');
+CALL add_column_if_not_exists('heritages', 'longitude', 'DECIMAL(10,7) DEFAULT NULL');
+CALL add_column_if_not_exists('heritages', 'address', 'VARCHAR(255) DEFAULT \'\'');
 
 -- folk_events 表新增地理坐标字段
-ALTER TABLE folk_events
-    ADD COLUMN IF NOT EXISTS latitude DECIMAL(10,7) DEFAULT NULL,
-    ADD COLUMN IF NOT EXISTS longitude DECIMAL(10,7) DEFAULT NULL,
-    ADD COLUMN IF NOT EXISTS address VARCHAR(255) DEFAULT '';
+CALL add_column_if_not_exists('folk_events', 'latitude', 'DECIMAL(10,7) DEFAULT NULL');
+CALL add_column_if_not_exists('folk_events', 'longitude', 'DECIMAL(10,7) DEFAULT NULL');
+CALL add_column_if_not_exists('folk_events', 'address', 'VARCHAR(255) DEFAULT \'\'');
+
+-- foods 表新增评分字段
+CALL add_column_if_not_exists('foods', 'rating', 'DECIMAL(2,1) DEFAULT NULL');
+
+DROP PROCEDURE IF EXISTS add_column_if_not_exists;

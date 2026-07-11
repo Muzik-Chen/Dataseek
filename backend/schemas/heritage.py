@@ -57,3 +57,29 @@ class FolkEventListParams(BaseModel):
     date_from: Optional[str] = None
     date_to: Optional[str] = None
     region: Optional[str] = None
+
+
+class FolkEventCreate(BaseModel):
+    name: str
+    description: str = ""
+    event_date: date
+    lunar_date: str = ""
+    region: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    address: str = ""
+    image_url: str = ""
+    event_type: str
+
+
+class FolkEventUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    event_date: Optional[date] = None
+    lunar_date: Optional[str] = None
+    region: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    address: Optional[str] = None
+    image_url: Optional[str] = None
+    event_type: Optional[str] = None

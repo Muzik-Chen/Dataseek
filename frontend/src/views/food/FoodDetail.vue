@@ -34,7 +34,12 @@
             <h1 class="display-text--section">{{ food.name }}</h1>
             <div class="info-meta">
               <span class="category">{{ food.category_name }}</span>
-              <span v-if="food.price_range" class="price">{{ food.price_range }}</span>
+              <span
+                v-if="food.price_range"
+                class="price"
+              >{{ food.type === 'shop' ? '人均: ' : '均价: ' }}{{ food.price_range }}</span>
+              <span v-else class="price price--muted">暂无相关信息</span>
+              <span class="rating" v-if="food.rating">⭐ {{ food.rating.toFixed(1) }} 分</span>
               <span class="views">👀 {{ food.view_count }} 次浏览</span>
             </div>
           </div>
@@ -250,6 +255,16 @@ onMounted(() => fetchDetail())
 .price {
   color: var(--accent);
   font-weight: 600;
+}
+
+.price--muted {
+  color: var(--text-muted);
+  font-weight: var(--fw-normal);
+}
+
+.rating {
+  color: var(--brand-amber);
+  font-weight: var(--fw-medium);
 }
 
 .desc-block,

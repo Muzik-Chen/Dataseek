@@ -19,6 +19,7 @@ class FoodOut(BaseModel):
     tags: Optional[list[str]] = None
     is_recommended: bool = False
     view_count: int = 0
+    rating: Optional[float] = None
     created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}

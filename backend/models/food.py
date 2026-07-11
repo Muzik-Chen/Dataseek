@@ -33,5 +33,6 @@ class Food(Base):
     tags: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     is_recommended: Mapped[bool] = mapped_column(Boolean, default=False)
     view_count: Mapped[int] = mapped_column(Integer, default=0)
+    rating: Mapped[float | None] = mapped_column(DECIMAL(2, 1), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())

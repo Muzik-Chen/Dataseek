@@ -19,7 +19,10 @@
       <h3 class="food-card__name">{{ food.name }}</h3>
       <div class="food-card__meta">
         <span class="food-card__score">⭐ {{ (food.score ?? food.rating ?? 4.5).toFixed(1) }}</span>
-        <span v-if="food.price_range" class="food-card__price">{{ food.price_range }}</span>
+        <span
+          class="food-card__price"
+          :class="{ 'food-card__price--muted': singlePrice.muted }"
+        >{{ singlePrice.text }}</span>
       </div>
       <p v-if="food.reason || food.description" class="food-card__desc">
         {{ food.reason || (typeof food.description === 'string' ? food.description.slice(0, 80) : '') }}
@@ -52,7 +55,10 @@
           <strong>{{ item.name }}</strong>
           <div class="food-card__meta">
             <span class="food-card__score">⭐ {{ (item.score ?? item.rating ?? 4.5).toFixed(1) }}</span>
-            <span v-if="item.price_range" class="food-card__price">{{ item.price_range }}</span>
+            <span
+              class="food-card__price"
+              :class="{ 'food-card__price--muted': formatPrice(item.price_range, item.type).muted }"
+            >{{ formatPrice(item.price_range, item.type).text }}</span>
           </div>
           <p class="food-card__desc">{{ item.reason || '' }}</p>
         </div>
@@ -65,9 +71,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
-defineProps({
+const props = defineProps({
   food: { type: Object, default: null },
   items: { type: Array, default: () => [] },
   summary: { type: String, default: '' },
@@ -81,6 +88,14 @@ function goDetail(item) {
   const id = item.id || item.food_id
   if (id) router.push(`/foods/${id}`)
 }
+
+function formatPrice(priceRange, type) {
+  if (!priceRange) return { text: '暂无相关信息', muted: true }
+  const prefix = type === 'shop' ? '人均: ' : '均价: '
+  return { text: prefix + priceRange, muted: false }
+}
+
+const singlePrice = computed(() => formatPrice(props.food?.price_range, props.food?.type))
 </script>
 
 <style scoped>
@@ -185,6 +200,12 @@ function goDetail(item) {
   background: var(--brand-red-light);
   padding: 2px 8px;
   border-radius: var(--radius-full);
+}
+
+.food-card__price--muted {
+  color: var(--text-muted);
+  background: var(--bg-surface-alt);
+  font-weight: var(--fw-normal);
 }
 
 .food-card__desc {
