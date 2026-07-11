@@ -122,17 +122,6 @@ function formatGregorian(dateStr) {
   return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`
 }
 
-<<<<<<< HEAD
-=======
-function eventTypeLabel(type) {
-  return { festival: '节日', event: '活动', custom: '民俗' }[type] || type
-}
-
-function eventTypeTag(type) {
-  return { festival: 'danger', event: 'primary', custom: 'success' }[type] || 'info'
-}
-
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 function firstImageUrl(imageUrl) {
   if (!imageUrl) return ''
   try {
@@ -143,7 +132,6 @@ function firstImageUrl(imageUrl) {
   }
 }
 
-<<<<<<< HEAD
 function eventTypeLabel(type) {
   return { festival: '节日', event: '活动', custom: '民俗' }[type] || type
 }
@@ -152,8 +140,6 @@ function eventTypeTag(type) {
   return { festival: 'danger', event: 'primary', custom: 'success' }[type] || 'info'
 }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 async function fetchEvents() {
   loading.value = true
   try {
@@ -227,7 +213,6 @@ onMounted(() => fetchEvents())
   border-radius: 12px;
   padding: var(--space-lg);
   box-shadow: 0 2px 8px oklch(0 0 0 / 0.03);
-<<<<<<< HEAD
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
@@ -235,37 +220,6 @@ onMounted(() => fetchEvents())
 .event-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px oklch(0 0 0 / 0.08);
-=======
-  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease,
-    padding 0.35s ease, background 0.5s ease;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-}
-
-.event-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--brand-red) 0%, #e8905c 50%, var(--brand-red) 100%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  z-index: -1;
-}
-
-.event-card:hover {
-  transform: scale(1.06);
-  box-shadow: 0 12px 36px oklch(0 0 0 / 0.12);
-  z-index: 10;
-  padding-top: calc(var(--space-lg) * 1.3);
-  padding-bottom: calc(var(--space-lg) * 1.3);
-  background: linear-gradient(135deg, #fff 0%, #fff8f2 50%, #fff 100%);
-}
-
-.event-card:hover::before {
-  opacity: 0.08;
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }
 
 .event-date-badge {

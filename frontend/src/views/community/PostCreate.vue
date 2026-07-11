@@ -1,9 +1,5 @@
 <template>
   <div class="post-create-page">
-<<<<<<< HEAD
-=======
-    <BackButton />
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <div class="page-header">
       <h1>✍️ 发布动态</h1>
       <p>分享你的潮汕探索故事、美食推荐或文化发现</p>
@@ -36,7 +32,6 @@
         </el-form-item>
 
         <el-form-item label="标签">
-<<<<<<< HEAD
           <div class="preset-tags">
             <button
               v-for="t in presetTags"
@@ -51,23 +46,6 @@
 
         <el-form-item label="图片">
           <ImageUploader v-model="form.images" :limit="9" />
-=======
-          <el-select
-            v-model="form.tags"
-            multiple
-            filterable
-            allow-create
-            placeholder="添加标签（回车创建）"
-            style="width:100%"
-          >
-            <el-option
-              v-for="t in presetTags"
-              :key="t"
-              :label="t"
-              :value="t"
-            />
-          </el-select>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         </el-form-item>
 
         <el-form-item>
@@ -86,12 +64,8 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { createPost } from '@/api'
-<<<<<<< HEAD
 import TagInput from '@/components/common/TagInput.vue'
 import ImageUploader from '@/components/common/ImageUploader.vue'
-=======
-import BackButton from '@/components/common/BackButton.vue'
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const router = useRouter()
 const formRef = ref(null)
@@ -102,10 +76,7 @@ const form = reactive({
   title: '',
   content: '',
   tags: [],
-<<<<<<< HEAD
   images: [],
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 })
 
 const presetTags = [
@@ -114,7 +85,6 @@ const presetTags = [
   '旅行攻略', '非遗体验', '民俗活动', '探店', '文化知识',
 ]
 
-<<<<<<< HEAD
 function toggleTag(tag) {
   const idx = form.tags.indexOf(tag)
   if (idx >= 0) {
@@ -124,8 +94,6 @@ function toggleTag(tag) {
   }
 }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 const rules = {
   post_type: [{ required: true }],
   title: [
@@ -149,10 +117,7 @@ async function publish() {
       content: form.content,
       post_type: form.post_type,
       tags: form.tags,
-<<<<<<< HEAD
       images: form.images,
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     })
     ElMessage.success('发布成功！')
     router.push('/community')
@@ -182,7 +147,6 @@ async function publish() {
   padding: var(--space-2xl);
   box-shadow: 0 2px 12px oklch(0 0 0 / 0.04);
 }
-<<<<<<< HEAD
 
 .preset-tags {
   display: flex;
@@ -205,6 +169,4 @@ async function publish() {
 .tea-pill--sm:hover { border-color: var(--brand-red); color: var(--brand-red); }
 .tea-pill--sm.active { background: var(--brand-red); color: #fff; border-color: var(--brand-red); }
 .tea-pill--sm:disabled { opacity: 0.4; cursor: not-allowed; }
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 </style>

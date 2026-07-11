@@ -110,7 +110,6 @@
           <li v-for="tip in currentPlan.tips" :key="tip">{{ tip }}</li>
         </ul>
       </div>
-<<<<<<< HEAD
 
       <!-- 🆕 Phase 2: Enrichment 富化数据 -->
       <div v-if="currentPlan?.enrichment" class="trip-enrichment">
@@ -164,31 +163,22 @@
           </div>
         </div>
       </div>
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     </template>
 
     <!-- 操作栏 -->
     <div class="trip-card__actions">
-<<<<<<< HEAD
       <el-button type="primary" size="small" @click="$emit('save', currentPlan)" :disabled="!currentPlan || !savingEnabled">
-=======
-      <el-button type="primary" size="small" @click="$emit('save', currentPlan)" :disabled="!currentPlan">
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         💾 保存到我的行程
       </el-button>
       <el-button size="small" @click="copyPlan">
         📋 复制
       </el-button>
-<<<<<<< HEAD
       <el-button size="small" @click="$emit('refine', currentPlan)">
         ✏️ 调整
       </el-button>
       <el-button size="small" @click="$emit('export', currentPlan)">
         🖼️ 导出
       </el-button>
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       <el-button size="small" @click="$emit('refresh')">
         🔄 换一换
       </el-button>
@@ -197,27 +187,17 @@
 </template>
 
 <script setup>
-<<<<<<< HEAD
 import { ref, computed, watch } from 'vue'
-=======
-import { ref, computed } from 'vue'
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   plans: { type: Array, default: () => [] },
-<<<<<<< HEAD
   savingEnabled: { type: Boolean, default: true },
   /** 外部控制选中的方案 ID（地图图例 ↔ Tab 双向联动） */
   activePlanId: { type: String, default: null },
 })
 
 const emit = defineEmits(['save', 'refresh', 'planChange', 'refine', 'export'])
-=======
-})
-
-defineEmits(['save', 'refresh'])
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const activePlan = ref(props.plans[0]?.plan_id || 'A')
 const activeDays = ref(1)
@@ -226,7 +206,6 @@ const currentPlan = computed(() =>
   props.plans.find(p => p.plan_id === activePlan.value)
 )
 
-<<<<<<< HEAD
 // Phase 3: 通知父组件方案切换，用于地图联动
 watch(activePlan, (newId) => {
   const plan = props.plans.find(p => p.plan_id === newId)
@@ -240,8 +219,6 @@ watch(() => props.activePlanId, (newId) => {
   }
 })
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 function typeIcon(type) {
   const map = {
     food: '🍲', scenery: '📸', culture: '🏛️',
@@ -250,14 +227,11 @@ function typeIcon(type) {
   return map[type] || '📍'
 }
 
-<<<<<<< HEAD
 function crowdLevelEmoji(level) {
   const map = { '低': '🟢', '中': '🟡', '高': '🔴' }
   return map[level] || '🔵'
 }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 function copyPlan() {
   if (!currentPlan.value) return
   const text = JSON.stringify(currentPlan.value, null, 2)
@@ -404,7 +378,6 @@ function copyPlan() {
   border-top: 1px solid oklch(0 0 0 / 0.06);
   flex-wrap: wrap;
 }
-<<<<<<< HEAD
 
 /* ── Phase 2: Enrichment 富化数据 ── */
 .trip-enrichment {
@@ -463,6 +436,4 @@ function copyPlan() {
   background: #F3E5F5;
   color: #6A1B9A;
 }
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 </style>

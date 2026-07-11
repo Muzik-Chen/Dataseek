@@ -24,11 +24,7 @@
       <div class="header-actions">
         <SearchBar
           v-model="searchText"
-<<<<<<< HEAD
           placeholder="搜索美食、非遗…"
-=======
-          placeholder="搜索美食、非遗OK…"
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
           :hot-keywords="hotKeywords"
           @search="onSearch"
         />
@@ -693,8 +689,4 @@ function onSearch(keyword) {
     font-size: 0.9rem;
   }
 }
-<<<<<<< HEAD
 </style>
-=======
-</style>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22

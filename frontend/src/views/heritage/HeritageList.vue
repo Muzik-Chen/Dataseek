@@ -8,11 +8,7 @@
       <div class="section-divider section-divider--left"></div>
     </div>
 
-<<<<<<< HEAD
     <!-- 筛选 + 排序 -->
-=======
-    <!-- 筛选 -->
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <div class="filter-bar">
       <div class="filter-row">
         <span class="filter-label">级别</span>
@@ -50,10 +46,7 @@
           @keyup.enter="fetchData"
           @clear="fetchData"
         />
-<<<<<<< HEAD
         <SortDropdown v-model="sort" :options="sortOptions" width="150px" @change="fetchData" />
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       </div>
     </div>
 
@@ -69,39 +62,22 @@
         v-for="item in items"
         :key="item.id"
         :item="item"
-<<<<<<< HEAD
         @favorite="handleFavorite"
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       />
     </div>
 
     <!-- 分页 -->
-<<<<<<< HEAD
     <Pagination
       v-model:page="page"
       :total="total"
       :page-size="pageSize"
       @change="fetchData"
     />
-=======
-    <div v-if="total > pageSize" class="pagination-wrap">
-      <el-pagination
-        v-model:current-page="page"
-        :page-size="pageSize"
-        :total="total"
-        layout="prev, pager, next"
-        background
-        @current-change="fetchData"
-      />
-    </div>
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-<<<<<<< HEAD
 import { useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -116,24 +92,13 @@ import BackButton from '@/components/common/BackButton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
-=======
-import { Search } from '@element-plus/icons-vue'
-import { getHeritages } from '@/api'
-import HeritageCard from '@/components/business/HeritageCard.vue'
-import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
-import BackButton from '@/components/common/BackButton.vue'
-import EmptyState from '@/components/common/EmptyState.vue'
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const loading = ref(true)
 const items = ref([])
 const filterCategory = ref('')
 const filterType = ref('')
 const keyword = ref('')
-<<<<<<< HEAD
 const sort = ref('created_at')
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 const page = ref(1)
 const pageSize = 20
 const total = ref(0)
@@ -141,7 +106,6 @@ const total = ref(0)
 const levels = ['国家级', '省级', '市级']
 const types = ['传统戏剧', '传统舞蹈', '传统美术', '传统技艺', '民俗', '传统音乐']
 
-<<<<<<< HEAD
 const sortOptions = [
   { label: '🕐 最新', value: 'created_at' },
   { label: '📛 名称', value: 'name' },
@@ -152,12 +116,6 @@ async function fetchData() {
   loading.value = true
   try {
     const params = { page: page.value, page_size: pageSize, sort: sort.value }
-=======
-async function fetchData() {
-  loading.value = true
-  try {
-    const params = { page: page.value, page_size: pageSize }
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     if (filterCategory.value) params.category = filterCategory.value
     if (filterType.value) params.type = filterType.value
     if (keyword.value) params.keyword = keyword.value
@@ -172,7 +130,6 @@ async function fetchData() {
   }
 }
 
-<<<<<<< HEAD
 async function handleFavorite(item) {
   if (!userStore.isLoggedIn) {
     ElMessage.warning('请先登录后再收藏')
@@ -187,8 +144,6 @@ async function handleFavorite(item) {
   }
 }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 onMounted(() => fetchData())
 </script>
 
@@ -240,27 +195,15 @@ onMounted(() => fetchData())
   min-width: 48px;
 }
 
-<<<<<<< HEAD
 .search-row {
   display: flex;
   align-items: center;
   gap: var(--space-md);
 }
 
-=======
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 .search-inline {
   max-width: 320px;
 }
 
 /* Masonry is provided by global .masonry-container */
-<<<<<<< HEAD
-=======
-
-.pagination-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--space-2xl);
-}
->>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 </style>
