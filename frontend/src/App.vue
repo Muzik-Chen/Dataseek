@@ -65,5 +65,4 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
   opacity: 0;
 }
 
-
 </style>

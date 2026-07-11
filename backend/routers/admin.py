@@ -1,4 +1,5 @@
 """
+<<<<<<< HEAD
 管理后台路由 — 基于 AdminResource 工厂 + 独立端点。
 """
 import os
@@ -13,6 +14,19 @@ from utils.dependencies import require_admin
 from utils.response import success, paginated, error
 from utils.security import mask_phone, mask_email
 
+=======
+管理后台路由 — 全部需要 admin 权限。
+"""
+from fastapi import APIRouter, Depends, HTTPException, Query, Form, UploadFile, File
+from sqlalchemy import select, func, text
+from sqlalchemy.ext.asyncio import AsyncSession
+import json
+
+from database import get_db
+from utils.dependencies import get_current_user, require_admin
+from utils.response import success_response, error_response
+from utils.security import mask_phone, mask_email
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 from models.user import User
 from models.food import Food, FoodCategory
 from models.heritage import Heritage
@@ -21,6 +35,7 @@ from models.dashboard import WeatherRecord, CrowdRecord
 from models.chat import ChatMessage
 from models.favorite import UserFavorite
 from models.trip import TripPlan
+<<<<<<< HEAD
 from models.heritage import FolkEvent
 
 from schemas.admin import (
@@ -93,6 +108,13 @@ router.include_router(event_admin.get_router())
 # 仪表盘
 # ─────────────────────────────────────────────────────────
 
+=======
+
+router = APIRouter(prefix="/admin", tags=["管理后台"])
+
+
+# === 仪表盘 ===
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @router.get("/stats")
 async def get_stats(
     db: AsyncSession = Depends(get_db),
@@ -103,6 +125,7 @@ async def get_stats(
     total_foods = (await db.execute(select(func.count(Food.id)))).scalar()
     total_heritages = (await db.execute(select(func.count(Heritage.id)))).scalar()
     total_posts = (await db.execute(select(func.count(CommunityPost.id)))).scalar()
+<<<<<<< HEAD
     total_events = (await db.execute(select(func.count(FolkEvent.id)))).scalar()
 
     # ai_calls_today — 从 chat_messages 按当天统计
@@ -113,6 +136,8 @@ async def get_stats(
             func.date(ChatMessage.created_at) == today
         )
     )).scalar()
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
     # 近7天新增用户趋势
     new_users_7d = (await db.execute(
@@ -122,13 +147,21 @@ async def get_stats(
         text("SELECT DATE(created_at) as d, COUNT(*) as c FROM community_posts WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) GROUP BY d ORDER BY d")
     )).fetchall()
 
+<<<<<<< HEAD
     return success(data={
+=======
+    return success_response(data={
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         "total_users": total_users,
         "total_foods": total_foods,
         "total_heritages": total_heritages,
         "total_posts": total_posts,
+<<<<<<< HEAD
         "total_events": total_events,
         "ai_calls_today": ai_calls_today or 0,
+=======
+        "ai_calls_today": 0,
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         "new_users_7d": [{"date": str(r[0]), "count": r[1]} for r in new_users_7d],
         "active_posts_7d": [{"date": str(r[0]), "count": r[1]} for r in active_posts_7d],
     })
@@ -147,16 +180,24 @@ async def get_recent_activity(
         select(ChatMessage).order_by(ChatMessage.created_at.desc()).limit(10)
     )).scalars().all()
 
+<<<<<<< HEAD
     return success(data={
+=======
+    return success_response(data={
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         "posts": [{"id": p.id, "title": p.title, "post_type": p.post_type, "created_at": str(p.created_at)} for p in posts],
         "chat_messages": [{"id": m.id, "content": m.content[:50] if m.content else "", "role": m.role, "created_at": str(m.created_at)} for m in msgs],
     })
 
 
+<<<<<<< HEAD
 # ─────────────────────────────────────────────────────────
 # 用户管理
 # ─────────────────────────────────────────────────────────
 
+=======
+# === 用户管理 ===
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @router.get("/users")
 async def list_users(
     page: int = Query(1, ge=1),
@@ -185,8 +226,13 @@ async def list_users(
         q.order_by(User.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
     )).scalars().all()
 
+<<<<<<< HEAD
     return paginated(
         items=[
+=======
+    return success_response(data={
+        "items": [
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
             {
                 "id": u.id, "email": mask_email(u.email), "phone": u.phone,
                 "nickname": u.nickname,
@@ -195,8 +241,13 @@ async def list_users(
             }
             for u in rows
         ],
+<<<<<<< HEAD
         total=total, page=page, page_size=page_size,
     )
+=======
+        "total": total, "page": page, "page_size": page_size,
+    })
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 @router.get("/users/{user_id}")
@@ -208,8 +259,14 @@ async def get_user_detail(
     """用户详情（含收藏数+行程数+动态数）。"""
     user = await db.get(User, user_id)
     if not user:
+<<<<<<< HEAD
         raise HTTPException(404, detail="用户不存在")
 
+=======
+        return error_response("E1006", "用户不存在")
+
+    # 统计关联数据
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     fav_count = (await db.execute(
         select(func.count()).select_from(UserFavorite).where(UserFavorite.user_id == user_id)
     )).scalar()
@@ -220,7 +277,11 @@ async def get_user_detail(
         select(func.count()).select_from(CommunityPost).where(CommunityPost.user_id == user_id)
     )).scalar()
 
+<<<<<<< HEAD
     return success(data={
+=======
+    return success_response(data={
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         "id": user.id, "email": mask_email(user.email), "phone": user.phone,
         "nickname": user.nickname,
         "avatar_url": user.avatar_url, "persona_type": user.persona_type,
@@ -233,6 +294,7 @@ async def get_user_detail(
 @router.put("/users/{user_id}")
 async def update_user(
     user_id: int,
+<<<<<<< HEAD
     body: UserAdminUpdate,
     db: AsyncSession = Depends(get_db),
     current_user=Depends(require_admin),
@@ -307,6 +369,263 @@ async def delete_user(
 # 社区审核（保持不变 — 结构特殊不走工厂）
 # ─────────────────────────────────────────────────────────
 
+=======
+    is_disabled: bool | None = Form(None),
+    role: str | None = Form(None),
+    persona_type: str | None = Form(None),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """编辑用户（管理员可修改角色/禁用状态/用户类型，不可改密码和邮箱）。"""
+    user = await db.get(User, user_id)
+    if not user:
+        return error_response("E1006", "用户不存在")
+    if is_disabled is not None:
+        user.is_disabled = is_disabled
+    if role is not None:
+        user.role = role
+    if persona_type is not None:
+        user.persona_type = persona_type
+    await db.commit()
+    await db.refresh(user)
+    return success_response(data={"id": user.id, "is_disabled": user.is_disabled, "role": user.role}, message="已更新")
+
+
+# === 美食内容管理 ===
+@router.post("/foods")
+async def create_food(
+    category_id: int = Form(...),
+    name: str = Form(..., min_length=2, max_length=100),
+    type: str = Form("dish"),
+    description: str = Form(""),
+    image: UploadFile | None = File(None),
+    address: str = Form(""),
+    latitude: float | None = Form(None),
+    longitude: float | None = Form(None),
+    price_range: str = Form(""),
+    tags: str = Form("[]"),
+    is_recommended: bool = Form(False),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """新增美食。"""
+    try:
+        tags_list = json.loads(tags) if tags else []
+    except json.JSONDecodeError:
+        tags_list = []
+
+    # 处理图片上传
+    image_url = ""
+    if image and image.filename:
+        import os, uuid
+        from config import get_settings
+        settings = get_settings()
+        ext = os.path.splitext(image.filename)[1] or ".jpg"
+        filename = f"food_{uuid.uuid4().hex[:8]}{ext}"
+        filepath = os.path.join(settings.UPLOAD_DIR, filename)
+        content = await image.read()
+        with open(filepath, "wb") as f:
+            f.write(content)
+        image_url = f"/uploads/{filename}"
+
+    food = Food(
+        category_id=category_id, name=name, type=type,
+        description=description, image_url=image_url,
+        address=address, latitude=latitude, longitude=longitude,
+        price_range=price_range, tags=tags_list, is_recommended=is_recommended,
+    )
+    db.add(food)
+    await db.commit()
+    await db.refresh(food)
+    return success_response(data={"id": food.id, "name": food.name}, message="已创建")
+
+
+@router.put("/foods/{food_id}")
+async def update_food(
+    food_id: int,
+    category_id: int | None = Form(None),
+    name: str | None = Form(None),
+    type: str | None = Form(None),
+    description: str | None = Form(None),
+    image: UploadFile | None = File(None),
+    address: str | None = Form(None),
+    latitude: float | None = Form(None),
+    longitude: float | None = Form(None),
+    price_range: str | None = Form(None),
+    tags: str | None = Form(None),
+    is_recommended: bool | None = Form(None),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """编辑美食。"""
+    food = await db.get(Food, food_id)
+    if not food:
+        return error_response("E1006", "美食不存在")
+
+    if category_id is not None:
+        food.category_id = category_id
+    if name is not None:
+        food.name = name
+    if type is not None:
+        food.type = type
+    if description is not None:
+        food.description = description
+    if address is not None:
+        food.address = address
+    if latitude is not None:
+        food.latitude = latitude
+    if longitude is not None:
+        food.longitude = longitude
+    if price_range is not None:
+        food.price_range = price_range
+    if tags is not None:
+        try:
+            food.tags = json.loads(tags)
+        except json.JSONDecodeError:
+            pass
+    if is_recommended is not None:
+        food.is_recommended = is_recommended
+
+    # 处理图片上传
+    if image and image.filename:
+        import os, uuid
+        from config import get_settings
+        settings = get_settings()
+        ext = os.path.splitext(image.filename)[1] or ".jpg"
+        filename = f"food_{uuid.uuid4().hex[:8]}{ext}"
+        filepath = os.path.join(settings.UPLOAD_DIR, filename)
+        content = await image.read()
+        with open(filepath, "wb") as f:
+            f.write(content)
+        food.image_url = f"/uploads/{filename}"
+
+    await db.commit()
+    await db.refresh(food)
+    return success_response(data={"id": food.id, "name": food.name}, message="已更新")
+
+
+@router.delete("/foods/{food_id}")
+async def delete_food(
+    food_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """删除美食。"""
+    food = await db.get(Food, food_id)
+    if not food:
+        return error_response("E1006", "美食不存在")
+    await db.delete(food)
+    await db.commit()
+    return success_response(message="已删除")
+
+
+# === 非遗内容管理 ===
+@router.post("/heritages")
+async def create_heritage(
+    name: str = Form(..., min_length=2, max_length=100),
+    category: str = Form(..., description="国家级/省级/市级"),
+    type: str = Form(..., description="传统戏剧/传统技艺/民俗/传统舞蹈/传统美术/传统音乐"),
+    description: str = Form(""),
+    image: UploadFile | None = File(None),
+    video_url: str = Form(""),
+    inheritor: str = Form(""),
+    region: str = Form(..., description="汕头/潮州/揭阳/汕尾"),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """新增非遗项目。"""
+    image_url = ""
+    if image and image.filename:
+        import os, uuid
+        from config import get_settings
+        settings = get_settings()
+        ext = os.path.splitext(image.filename)[1] or ".jpg"
+        filename = f"heritage_{uuid.uuid4().hex[:8]}{ext}"
+        filepath = os.path.join(settings.UPLOAD_DIR, filename)
+        content = await image.read()
+        with open(filepath, "wb") as f:
+            f.write(content)
+        image_url = f"/uploads/{filename}"
+
+    heritage = Heritage(
+        name=name, category=category, type=type,
+        description=description, image_url=image_url,
+        video_url=video_url, inheritor=inheritor, region=region,
+    )
+    db.add(heritage)
+    await db.commit()
+    await db.refresh(heritage)
+    return success_response(data={"id": heritage.id, "name": heritage.name}, message="已创建")
+
+
+@router.put("/heritages/{heritage_id}")
+async def update_heritage(
+    heritage_id: int,
+    name: str | None = Form(None),
+    category: str | None = Form(None),
+    type: str | None = Form(None),
+    description: str | None = Form(None),
+    image: UploadFile | None = File(None),
+    video_url: str | None = Form(None),
+    inheritor: str | None = Form(None),
+    region: str | None = Form(None),
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """编辑非遗项目。"""
+    heritage = await db.get(Heritage, heritage_id)
+    if not heritage:
+        return error_response("E1006", "非遗项目不存在")
+
+    if name is not None:
+        heritage.name = name
+    if category is not None:
+        heritage.category = category
+    if type is not None:
+        heritage.type = type
+    if description is not None:
+        heritage.description = description
+    if video_url is not None:
+        heritage.video_url = video_url
+    if inheritor is not None:
+        heritage.inheritor = inheritor
+    if region is not None:
+        heritage.region = region
+
+    if image and image.filename:
+        import os, uuid
+        from config import get_settings
+        settings = get_settings()
+        ext = os.path.splitext(image.filename)[1] or ".jpg"
+        filename = f"heritage_{uuid.uuid4().hex[:8]}{ext}"
+        filepath = os.path.join(settings.UPLOAD_DIR, filename)
+        content = await image.read()
+        with open(filepath, "wb") as f:
+            f.write(content)
+        heritage.image_url = f"/uploads/{filename}"
+
+    await db.commit()
+    await db.refresh(heritage)
+    return success_response(data={"id": heritage.id, "name": heritage.name}, message="已更新")
+
+
+@router.delete("/heritages/{heritage_id}")
+async def delete_heritage(
+    heritage_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(require_admin),
+):
+    """删除非遗项目。"""
+    heritage = await db.get(Heritage, heritage_id)
+    if not heritage:
+        return error_response("E1006", "非遗项目不存在")
+    await db.delete(heritage)
+    await db.commit()
+    return success_response(message="已删除")
+
+
+# === 社区审核 ===
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @router.get("/posts")
 async def list_posts_admin(
     page: int = Query(1, ge=1),
@@ -327,8 +646,13 @@ async def list_posts_admin(
         q.order_by(CommunityPost.created_at.desc()).offset((page - 1) * page_size).limit(page_size)
     )).scalars().all()
 
+<<<<<<< HEAD
     return paginated(
         items=[
+=======
+    return success_response(data={
+        "items": [
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
             {
                 "id": p.id, "title": p.title, "content": p.content[:100] if p.content else "",
                 "post_type": p.post_type, "like_count": p.like_count,
@@ -337,8 +661,13 @@ async def list_posts_admin(
             }
             for p in rows
         ],
+<<<<<<< HEAD
         total=total, page=page, page_size=page_size,
     )
+=======
+        "total": total,
+    })
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 @router.get("/posts/{post_id}")
@@ -347,10 +676,18 @@ async def get_post_detail_admin(
     db: AsyncSession = Depends(get_db),
     current_user=Depends(require_admin),
 ):
+<<<<<<< HEAD
     post = await db.get(CommunityPost, post_id)
     if not post:
         raise HTTPException(404, detail="帖子不存在")
     return success(data={
+=======
+    """查看帖子详情（含完整内容）。"""
+    post = await db.get(CommunityPost, post_id)
+    if not post:
+        return error_response("E1006", "帖子不存在")
+    return success_response(data={
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
         "id": post.id, "title": post.title, "content": post.content,
         "images": post.images, "tags": post.tags, "post_type": post.post_type,
         "view_count": post.view_count, "like_count": post.like_count,
@@ -364,11 +701,23 @@ async def delete_post_admin(
     db: AsyncSession = Depends(get_db),
     current_user=Depends(require_admin),
 ):
+<<<<<<< HEAD
     post = await db.get(CommunityPost, post_id)
     if not post:
         raise HTTPException(404, detail="帖子不存在")
 
     from models.community import PostLike
+=======
+    """删除帖子（管理员可删任何人）。"""
+    post = await db.get(CommunityPost, post_id)
+    if not post:
+        return error_response("E1006", "帖子不存在")
+    # 同时删除关联评论和点赞
+    from models.community import PostLike
+    await db.execute(select(PostComment).where(PostComment.post_id == post_id))
+    await db.execute(select(PostLike).where(PostLike.post_id == post_id))
+    # 使用 ORM 批量删除，避免 SQL 注入
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     comments = (await db.execute(
         select(PostComment).where(PostComment.post_id == post_id)
     )).scalars().all()
@@ -381,7 +730,11 @@ async def delete_post_admin(
         await db.delete(l)
     await db.delete(post)
     await db.commit()
+<<<<<<< HEAD
     return success(message="已删除")
+=======
+    return success_response(message="已删除")
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 @router.delete("/comments/{comment_id}")
@@ -390,6 +743,7 @@ async def delete_comment_admin(
     db: AsyncSession = Depends(get_db),
     current_user=Depends(require_admin),
 ):
+<<<<<<< HEAD
     comment = await db.get(PostComment, comment_id)
     if not comment:
         raise HTTPException(404, detail="评论不存在")
@@ -402,6 +756,18 @@ async def delete_comment_admin(
 # 数据管理
 # ─────────────────────────────────────────────────────────
 
+=======
+    """删除评论。"""
+    comment = await db.get(PostComment, comment_id)
+    if not comment:
+        return error_response("E1006", "评论不存在")
+    await db.delete(comment)
+    await db.commit()
+    return success_response(message="已删除")
+
+
+# === 数据管理 ===
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @router.get("/weather-logs")
 async def get_weather_logs(
     page: int = Query(1), page_size: int = Query(20),
@@ -414,8 +780,13 @@ async def get_weather_logs(
         q = q.where(WeatherRecord.region == region)
     total = (await db.execute(select(func.count()).select_from(q.subquery()))).scalar()
     rows = (await db.execute(q.offset((page - 1) * page_size).limit(page_size))).scalars().all()
+<<<<<<< HEAD
     return paginated(
         items=[
+=======
+    return success_response(data={
+        "items": [
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
             {
                 "id": r.id, "region": r.region, "temperature": float(r.temperature),
                 "humidity": r.humidity, "weather_desc": r.weather_desc,
@@ -423,8 +794,13 @@ async def get_weather_logs(
             }
             for r in rows
         ],
+<<<<<<< HEAD
         total=total, page=page, page_size=page_size,
     )
+=======
+        "total": total,
+    })
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 @router.get("/crowd-logs")
@@ -439,8 +815,13 @@ async def get_crowd_logs(
         q = q.where(CrowdRecord.region == region)
     total = (await db.execute(select(func.count()).select_from(q.subquery()))).scalar()
     rows = (await db.execute(q.offset((page - 1) * page_size).limit(page_size))).scalars().all()
+<<<<<<< HEAD
     return paginated(
         items=[
+=======
+    return success_response(data={
+        "items": [
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
             {
                 "id": r.id, "region": r.region, "location_name": r.location_name,
                 "crowd_level": r.crowd_level, "estimated_count": r.estimated_count,
@@ -448,22 +829,38 @@ async def get_crowd_logs(
             }
             for r in rows
         ],
+<<<<<<< HEAD
         total=total, page=page, page_size=page_size,
     )
+=======
+        "total": total,
+    })
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 @router.post("/refresh-weather")
 async def refresh_weather(current_user=Depends(require_admin)):
+<<<<<<< HEAD
     try:
         from utils.weather_fetcher import fetch_weather_data
         await fetch_weather_data()
         return success(message="气象数据刷新成功")
     except Exception as e:
         raise HTTPException(500, detail=f"气象数据拉取失败: {str(e)}")
+=======
+    """手动触发气象数据拉取。"""
+    try:
+        from utils.weather_fetcher import fetch_weather_data
+        await fetch_weather_data()
+        return success_response(message="气象数据刷新成功")
+    except Exception as e:
+        return error_response("E2001", f"气象数据拉取失败: {str(e)}")
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 @router.post("/generate-crowd")
 async def generate_crowd(current_user=Depends(require_admin)):
+<<<<<<< HEAD
     try:
         from utils.weather_fetcher import generate_crowd_data
         await generate_crowd_data()
@@ -558,10 +955,34 @@ async def get_settings(current_user=Depends(require_admin)):
         "sms_sign_name": env.get("SMS_SIGN_NAME", "潮汕文化平台"),
         # 天气
         "weather_api_key": env.get("QWEATHER_API_KEY", ""),
+=======
+    """手动触发人流模拟数据生成。"""
+    try:
+        from utils.weather_fetcher import generate_crowd_data
+        await generate_crowd_data()
+        return success_response(message="人流模拟数据已生成")
+    except Exception as e:
+        return error_response("E2001", f"人流数据生成失败: {str(e)}")
+
+
+# === 系统设置 ===
+@router.get("/settings")
+async def get_settings(current_user=Depends(require_admin)):
+    import os
+    return success_response(data={
+        "llm_provider": os.getenv("LLM_PROVIDER", "qwen"),
+        "llm_model": os.getenv("QWEN_MODEL", "") or os.getenv("DEEPSEEK_MODEL", "qwen-turbo"),
+        "api_key": "***",
+        "smtp_server": os.getenv("SMTP_SERVER", "smtp.163.com"),
+        "smtp_username": os.getenv("SMTP_USERNAME", ""),
+        "smtp_from": os.getenv("SMTP_FROM", ""),
+        "weather_api_key": os.getenv("QWEATHER_API_KEY", ""),
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     })
 
 
 @router.put("/settings")
+<<<<<<< HEAD
 async def update_settings(
     body: SettingsAdminUpdate,
     current_user=Depends(require_admin),
@@ -595,3 +1016,7 @@ async def update_settings(
         _write_env_file(env_updates)
 
     return success(message="设置已保存，部分配置需重启服务生效")
+=======
+async def update_settings(current_user=Depends(require_admin)):
+    return success_response(message="设置已更新（需在 .env 文件中手动修改后重启服务生效）")
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22

@@ -33,7 +33,10 @@ def _user_dict(user: User) -> dict:
         "nickname": user.nickname,
         "avatar_url": user.avatar_url,
         "persona_type": user.persona_type,
+<<<<<<< HEAD
         "role": user.role,
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     }
 
 

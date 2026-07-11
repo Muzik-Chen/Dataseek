@@ -246,4 +246,3 @@ onMounted(() => fetchDetail())
 @media (max-width: 640px) {
   .trip-map-section { margin-bottom: var(--space-lg); }
 }
-</style>

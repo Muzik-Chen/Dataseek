@@ -39,7 +39,10 @@ from routers.admin import router as admin_router
 from routers.festival import router as festival_router
 from routers.ai import router as ai_router
 from routers.hotel import router as hotel_router
+<<<<<<< HEAD
 from routers.upload import router as upload_router
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 async def init_db():
@@ -198,7 +201,10 @@ app.include_router(admin_router, prefix="/api/v1")
 app.include_router(festival_router, prefix="/api/v1")
 app.include_router(ai_router, prefix="/api/v1")
 app.include_router(hotel_router, prefix="/api/v1")
+<<<<<<< HEAD
 app.include_router(upload_router, prefix="/api/v1")
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 
 # --- 健康检查 ---

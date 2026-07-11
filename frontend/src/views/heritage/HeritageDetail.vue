@@ -1,5 +1,9 @@
 <template>
   <div class="heritage-detail-page">
+<<<<<<< HEAD
+=======
+    <BackButton />
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <LoadingSkeleton v-if="loading" type="detail" />
 
     <div v-else-if="error" class="error-state">
@@ -13,11 +17,18 @@
 
     <template v-else-if="heritage">
       <!-- 头图 -->
+<<<<<<< HEAD
       <div class="hero-image" @click="heritage.image_url && viewer.open([heritage.image_url])">
         <el-image v-if="heritage.image_url" :src="heritage.image_url" fit="cover" class="cover-img" />
         <div v-else class="cover-placeholder">🎭</div>
       </div>
       <ImageViewer ref="viewer" />
+=======
+      <div class="hero-image">
+        <el-image v-if="heritage.image_url" :src="heritage.image_url" fit="cover" class="cover-img" />
+        <div v-else class="cover-placeholder">🎭</div>
+      </div>
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
       <div class="content-wrap">
         <div class="main-info">
@@ -69,6 +80,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+<<<<<<< HEAD
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
@@ -82,11 +94,25 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const viewer = ref(null)
+=======
+import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { Star, StarFilled } from '@element-plus/icons-vue'
+import { getHeritageDetail, addFavorite, removeFavorite } from '@/api'
+import BackButton from '@/components/common/BackButton.vue'
+import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
+
+const route = useRoute()
+
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 const heritage = ref(null)
 const loading = ref(true)
 const error = ref('')
 const isFavorited = ref(false)
+<<<<<<< HEAD
 const favoriteId = ref(null)
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 const levelTagType = {
   '国家级': 'danger',
@@ -100,10 +126,13 @@ async function fetchDetail() {
   try {
     heritage.value = await getHeritageDetail(route.params.id)
     document.title = `${heritage.value.name} - 潮汕文化宣传平台`
+<<<<<<< HEAD
     // 登录后检查收藏状态
     if (userStore.isLoggedIn) {
       await checkFavoriteStatus()
     }
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   } catch (e) {
     error.value = e.message || '加载失败'
   } finally {
@@ -111,6 +140,7 @@ async function fetchDetail() {
   }
 }
 
+<<<<<<< HEAD
 async function checkFavoriteStatus() {
   try {
     const res = await checkFavorite({ item_type: 'heritage', item_id: heritage.value.id })
@@ -139,6 +169,17 @@ async function toggleFavorite() {
       const res = await addFavorite({ item_type: 'heritage', item_id: heritage.value.id })
       isFavorited.value = true
       favoriteId.value = res.id
+=======
+async function toggleFavorite() {
+  try {
+    if (isFavorited.value) {
+      await removeFavorite(heritage.value.id)
+      isFavorited.value = false
+      ElMessage.success('已取消收藏')
+    } else {
+      await addFavorite({ item_type: 'heritage', item_id: heritage.value.id })
+      isFavorited.value = true
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       ElMessage.success('已收藏')
     }
   } catch (e) {

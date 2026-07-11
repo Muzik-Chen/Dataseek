@@ -166,6 +166,63 @@ async def get_crowd_geo(
     return success(items)
 
 
+<<<<<<< HEAD
+=======
+@router.get("/crowd/history")
+async def get_crowd_history(
+    days: int = Query(7, ge=1, le=30),
+    region: str | None = None,
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    获取过去 N 天的人流历史趋势数据（供数据大屏预测图表使用）。
+    按天聚合：取当日平均人流等级 + 最大预估人数。
+    返回 { current: 最新一天, history: [{date, crowd_level, estimated_count}, ...] }
+    """
+    from datetime import date, timedelta
+
+    today = date.today()
+    start_date = today - timedelta(days=days)
+
+    # 查询时段内所有人流记录
+    q = select(CrowdRecord).where(
+        func.date(CrowdRecord.record_time) >= start_date,
+        func.date(CrowdRecord.record_time) <= today,
+    )
+    if region:
+        q = q.where(CrowdRecord.region == region)
+    rows = (await db.execute(q.order_by(CrowdRecord.record_time.asc()))).scalars().all()
+
+    # 按日期聚合
+    day_data: dict[str, dict] = {}
+    for r in rows:
+        d = r.record_time.date().isoformat()
+        if d not in day_data:
+            day_data[d] = {"levels": [], "max_count": 0}
+        day_data[d]["levels"].append(r.crowd_level)
+        if r.estimated_count > day_data[d]["max_count"]:
+            day_data[d]["max_count"] = r.estimated_count
+
+    # 构建历史列表（按日期排序）
+    history = []
+    for d_str in sorted(day_data.keys()):
+        dd = day_data[d_str]
+        avg_level = round(sum(dd["levels"]) / len(dd["levels"]), 1) if dd["levels"] else 1
+        history.append({
+            "date": d_str,
+            "crowd_level": avg_level,
+            "estimated_count": dd["max_count"],
+        })
+
+    # current = 最新一天，history = 前 N-1 天
+    current = history[-1] if history else None
+    if current:
+        history = history[:-1]
+
+    return success({"current": current, "history": history})
+
+
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @router.get("/weather/geo")
 async def get_weather_geo(
     lat: float = Query(...),

@@ -22,7 +22,11 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, script_dir)
 
 from sqlalchemy import text
+<<<<<<< HEAD
 from database import async_session_factory, engine
+=======
+from database import async_session_factory
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 # ============================================================
 # 原始数据（纯字典，不含 hash）
@@ -412,7 +416,10 @@ async def seed():
 
         await session.commit()
 
+<<<<<<< HEAD
     await engine.dispose()
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     print("[OK] 种子数据灌入完成!")
     print(f"   - {len(USERS)} 个用户（密码: {PLAIN_PASSWORD}）")
     print(f"   - {len(FOOD_CATEGORIES)} 个美食分类")

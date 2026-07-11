@@ -43,7 +43,10 @@ export const useChatStore = defineStore('chat', () => {
       foodItems: extra.foodItems || [],
       foodSummary: extra.foodSummary || '',
       isStreaming: extra.isStreaming || false,
+<<<<<<< HEAD
       enrichment: extra.enrichment || null,   // Phase 2: { plan_id: { weather, foods, heritages, hotels, crowd } }
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       intent: intents.length > 0 ? (intents.find(i => i.primary) || intents[0]).intent : null,
       intents,
     }
@@ -51,9 +54,13 @@ export const useChatStore = defineStore('chat', () => {
 
   // ===== Actions =====
   function addMessage(role, content, type) {
+<<<<<<< HEAD
     const msg = makeMsg(role, type || 'text', content)
     messages.value.push(msg)
     return msg.id
+=======
+    messages.value.push(makeMsg(role, type || 'text', content))
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   }
 
   function addCardMessage(type, cardData) {
@@ -89,6 +96,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
+<<<<<<< HEAD
   /**
    * Phase 2: 更新消息的 enrichment 数据（按 plan_id + enrichment_type 存储）。
    * @param {string} msgId - 消息 ID
@@ -104,6 +112,8 @@ export const useChatStore = defineStore('chat', () => {
     msg.enrichment[planId][type] = data
   }
 
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   function setIntent(intent) {
     currentIntent.value = intent
   }
@@ -202,7 +212,10 @@ export const useChatStore = defineStore('chat', () => {
     setThinking,
     clearThinking,
     updateMessage,
+<<<<<<< HEAD
     updateMessageEnrichment,
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     setIntent,
     setMessageIntent,
     setMessageIntents,

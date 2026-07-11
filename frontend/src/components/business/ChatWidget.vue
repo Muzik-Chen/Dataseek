@@ -195,8 +195,11 @@ const msgContainer = ref(null)
 const quickOptions = ref([])
 const lastTripParams = ref(null)
 const tripPlans = ref([])
+<<<<<<< HEAD
 const savedTripPlans = ref([])       // persisted across onDone for save button
 const enrichmentByPlanId = ref({})  // Phase 2: enrichment data keyed by plan_id
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 // ── 拖拽状态（仅作用于 panel，FAB 按钮固定不动）──
 const panelRef = ref(null)
@@ -300,8 +303,11 @@ function startNewChat() {
   quickOptions.value = []
   lastTripParams.value = null
   tripPlans.value = []
+<<<<<<< HEAD
   savedTripPlans.value = []
   enrichmentByPlanId.value = {}
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }
 
 function sendCurrentMessage() {
@@ -325,6 +331,7 @@ async function sendMessage(text) {
     },
     onDone(sessionId) {
       if (sessionId) chatStore.setSessionId(sessionId)
+<<<<<<< HEAD
       // Phase 2: merge enrichment into trip plans before formatting
       if (tripPlans.value.length > 0) {
         for (const plan of tripPlans.value) {
@@ -340,6 +347,13 @@ async function sendMessage(text) {
         chatStore.updateMessage(msgId, { tripPlans: tripPlans.value.map(p => ({ ...p })) })
         tripPlans.value = []
         enrichmentByPlanId.value = {}
+=======
+      // 将累积的行程方案格式化为文字输出
+      if (tripPlans.value.length > 0) {
+        const formattedText = formatTripPlansAsText(tripPlans.value)
+        chatStore.addMessage('assistant', formattedText, 'trip_text')
+        tripPlans.value = []
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
       }
       // 意图导航 — useSSE 的 done 事件已通过 setLastAssistantIntents 处理
       // 此处保留兜底：如果 currentIntent 有值但 intents 未设置
@@ -390,6 +404,7 @@ async function sendMessage(text) {
       chatStore.clearThinking()
       streamError.value = msg
     },
+<<<<<<< HEAD
     // ── Phase 2: Route Enrichment Callbacks ──
     onRouteWeather(data) {
       if (data.plan_id) {
@@ -421,6 +436,8 @@ async function sendMessage(text) {
         enrichmentByPlanId.value[data.plan_id].crowd = data.crowd || data
       }
     },
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   })
 }
 
@@ -499,6 +516,7 @@ function formatTripPlansAsText(plans) {
       })
       html += '</ul>'
     }
+<<<<<<< HEAD
 
     // ── Phase 2: Enrichment 富化数据 ──
     const enrich = plan.enrichment
@@ -546,6 +564,8 @@ function formatTripPlansAsText(plans) {
         html += '</div>'
       }
     }
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   })
 
   return html
@@ -566,6 +586,7 @@ async function handleSaveTrip(plan) {
     return
   }
   try {
+<<<<<<< HEAD
     await tripApi.importPlan({
       title: plan.title || plan.theme || 'AI 行程方案',
       days: plan.days?.length || 3,
@@ -576,11 +597,21 @@ async function handleSaveTrip(plan) {
       },
     })
     ElMessage.success('行程已保存！可在个人中心查看')
+=======
+    await tripApi.create({
+      title: plan.title || 'AI 行程方案',
+      days: plan.days?.length || 3,
+      crowd_type: 'family',
+      preferences: [],
+    })
+    ElMessage.success('行程已保存！')
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   } catch {
     ElMessage.error('保存失败，请重试')
   }
 }
 
+<<<<<<< HEAD
 async function handleSaveTripText(msg) {
   if (!userStore.isLoggedIn) {
     ElMessage.warning('请先登录')
@@ -606,6 +637,15 @@ async function handleSaveTripText(msg) {
   } catch {
     ElMessage.error('保存失败，请重试')
   }
+=======
+function handleSaveTripText(msg) {
+  // 从 HTML content 中提取纯文本用于保存
+  const tempDiv = document.createElement('div')
+  tempDiv.innerHTML = msg.content || ''
+  const plainText = tempDiv.textContent || tempDiv.innerText || ''
+  // 尝试解析回 plan 数据（从 tripPlans 获取）
+  ElMessage.info('行程内容已展示，可通过行程规划页面创建并保存')
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 }
 
 function handleCopyTripText(msg) {
@@ -1017,6 +1057,7 @@ function scrollToBottom() {
   margin: 16px 0;
 }
 
+<<<<<<< HEAD
 /* ── Phase 2: Enrichment 富化数据样式 ── */
 .trip-text__content :deep(.trip-enrich-weather) {
   display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px;
@@ -1049,6 +1090,8 @@ function scrollToBottom() {
   background: #F3E5F5; color: #6A1B9A;
 }
 
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 .trip-text__actions {
   display: flex;
   gap: 8px;

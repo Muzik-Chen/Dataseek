@@ -1,5 +1,9 @@
 <template>
   <div class="post-detail-page">
+<<<<<<< HEAD
+=======
+    <BackButton />
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <LoadingSkeleton v-if="loading" type="detail" />
 
     <div v-else-if="error" class="error-state">
@@ -35,10 +39,17 @@
             :src="img"
             fit="cover"
             class="detail-img"
+<<<<<<< HEAD
             @click="viewer.open(post.images, i)"
           />
         </div>
         <ImageViewer ref="viewer" />
+=======
+            :preview-src-list="post.images"
+            :initial-index="i"
+          />
+        </div>
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
         <div v-if="post.tags?.length" class="post-tags">
           <el-tag v-for="tag in post.tags" :key="tag" round>{{ tag }}</el-tag>
@@ -111,12 +122,20 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled } from '@element-plus/icons-vue'
 import { getPostDetail, getComments, createComment, likePost, unlikePost } from '@/api'
+<<<<<<< HEAD
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
 import ImageViewer from '@/components/common/ImageViewer.vue'
 
 const route = useRoute()
 
 const viewer = ref(null)
+=======
+import BackButton from '@/components/common/BackButton.vue'
+import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
+
+const route = useRoute()
+
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 const post = ref(null)
 const comments = ref([])
 const commentText = ref('')

@@ -1,5 +1,9 @@
 # 潮汕文化宣传平台 — 前端组件层级关系
+<<<<<<< HEAD
 # 生成日期: 2026-07-10（更新：AI 行程规划 UX 深度优化）
+=======
+# 生成日期: 2026-07-09
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 # 总计: 51 个 .vue 文件（21 个 components + 30 个 views）
 
 
@@ -18,7 +22,11 @@ components/
 │   ├── FoodCard.vue              美食卡片
 │   ├── HeritageCard.vue          非遗卡片
 │   ├── PostCard.vue              社区帖子卡片 ⚠️ 未使用（CommunityFeed 内联渲染）
+<<<<<<< HEAD
 │   ├── TripCard.vue              行程方案卡片（TripCreate + TripDetail）
+=======
+│   ├── TripCard.vue              行程方案卡片
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 │   ├── WeatherChart.vue          天气图表（ECharts）
 │   └── CrowdChart.vue            人流图表（ECharts）
 │
@@ -27,7 +35,11 @@ components/
 │   ├── SearchOverlay.vue         全局搜索遮罩（Ctrl+K 唤起）
 │   ├── EmptyState.vue            空状态占位
 │   ├── LoadingSkeleton.vue       加载骨架屏
+<<<<<<< HEAD
 │   ├── MapContainer.vue          地图容器（高德 JSAPI 2.0）— TripCreate + TripDetail 中使用
+=======
+│   ├── MapContainer.vue          地图容器（高德 JSAPI 2.0）⚠️ 未使用（Phase 1 已建，待 Phase 3 集成）
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 │   ├── ImageUploader.vue         图片上传
 │   ├── ImageViewer.vue           图片预览 ⚠️ 未使用
 │   ├── Pagination.vue            分页器 ⚠️ 未使用（页面直接用 el-pagination）
@@ -120,12 +132,18 @@ App.vue  [应用根组件]
 │   │   └── EmptyState  [空状态]
 │   │
 │   ├── TripCreate  [创建行程]          path: /trip/create   requiresAuth
+<<<<<<< HEAD
 │   │   ├── MapContainer  [地图容器]     # 全屏探索地图 + 侧边栏结果小地图
 │   │   └── TripCard  [行程方案卡片]
 │   │
 │   ├── TripDetail  [行程详情]          path: /trip/:id       requiresAuth
 │   │   ├── MapContainer  [地图容器]     # 路线地图（有 route_geo 时展示）
 │   │   ├── TripCard  [行程方案卡片]     # 复用展示 plan_content
+=======
+│   │   └── TripCard  [行程方案卡片]
+│   │
+│   ├── TripDetail  [行程详情]          path: /trip/:id       requiresAuth
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 │   │   └── LoadingSkeleton  [加载骨架屏]
 │   │
 │   ├── CommunityFeed  [社区推荐]       path: /community
@@ -216,9 +234,13 @@ SearchBar        [搜索栏]          2 次 ─── AppHeader / Home
 
 ImageUploader    [图片上传]        2 次 ─── AdminFoods / AdminHeritages
 
+<<<<<<< HEAD
 TripCard         [行程方案卡片]    2 次 ─── TripCreate / TripDetail
 
 MapContainer     [地图容器]        2 次 ─── TripCreate / TripDetail
+=======
+TripCard         [行程方案卡片]    1 次 ─── TripCreate
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 WeatherChart     [天气图表]        1 次 ─── AdminDashboardData
 
@@ -229,9 +251,16 @@ CrowdChart       [人流图表]        1 次 ─── AdminDashboardData
 四、未被引用的组件（已创建但尚未集成）
 ================================================================================
 
+<<<<<<< HEAD
 以下 9 个组件存在于目录中，但没有被任何父组件 import：
 
   components/common/
+=======
+以下 10 个组件存在于目录中，但没有被任何父组件 import：
+
+  components/common/
+    ├── MapContainer.vue         地图容器         — Phase 1.5 已建，等待 Phase 3 地图可视化集成
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     ├── ImageViewer.vue          图片预览         — 待接入
     ├── Pagination.vue           分页器           — 通用分页封装，页面直接用 el-pagination
     ├── SortDropdown.vue         排序下拉         — 待接入
@@ -266,11 +295,15 @@ CrowdChart       [人流图表]        1 次 ─── AdminDashboardData
 
 4. 行程规划闭环:
    ChatWidget [AI聊天悬浮组件] (问AI) / TripCreate [创建行程] (手动表单) →
+<<<<<<< HEAD
      MapContainer [地图容器] (全屏地图 + 路线绘制) + TripCard [行程方案卡片] →
      TripDetail [行程详情] (MapContainer [地图容器] + TripCard [行程方案卡片])
 
    7/10 UX 优化: 保存不跳转、离开确认、AI 生成完自动存草稿、侧边栏 hover 收起、
    地图路线持久化恢复、草稿状态标签（draft → 橙色"草稿"）
+=======
+     TripCard [行程方案卡片] → TripDetail [行程详情]
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 5. 后台管理闭环:
    App.vue → router-view → AdminLayout [管理后台布局] →
@@ -311,7 +344,11 @@ CrowdChart       [人流图表]        1 次 ─── AdminDashboardData
   L3            0     所有业务组件到此为止，无更深嵌套
   ─────────────────────────────────────────────────
   页面路由     30     views/（前台 20 个 + 后台 9 个 + 404）
+<<<<<<< HEAD
   未使用        9     已创建但尚未被 import 的组件
+=======
+  未使用       10     已创建但尚未被 import 的组件
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   ─────────────────────────────────────────────────
   总计         51     .vue 文件
 

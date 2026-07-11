@@ -85,7 +85,11 @@ const form = reactive({
 const rules = {
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
+<<<<<<< HEAD
     { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: '邮箱格式不正确', trigger: 'blur' },
+=======
+    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' },
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },

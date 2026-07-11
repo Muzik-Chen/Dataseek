@@ -46,7 +46,10 @@ export const updateUserProfile = userApi.updateProfile.bind(userApi)
 export const getUserFavorites = userApi.getFavorites.bind(userApi)
 export const addFavorite = userApi.addFavorite.bind(userApi)
 export const removeFavorite = userApi.removeFavorite.bind(userApi)
+<<<<<<< HEAD
 export const checkFavorite = userApi.checkFavorite.bind(userApi)
+=======
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 // Chat
 import { chatApi } from './chat'
@@ -83,15 +86,34 @@ export const sendMessage = messageApi.send.bind(messageApi)
 // Dashboard
 import { dashboardApi } from './dashboard'
 export { dashboardApi }
+<<<<<<< HEAD
+=======
+export const getWeather = dashboardApi.weather.bind(dashboardApi)
+export const getCrowd = dashboardApi.crowd.bind(dashboardApi)
+export const getCrowdHistory = dashboardApi.crowdHistory.bind(dashboardApi)
+export const getCrowdGeo = dashboardApi.crowdGeo.bind(dashboardApi)
+export const getWeatherGeo = dashboardApi.weatherGeo.bind(dashboardApi)
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 // Hotel
 import { hotelApi } from './hotel'
 export { hotelApi }
+<<<<<<< HEAD
 export const getWeather = dashboardApi.weather.bind(dashboardApi)
 export const getCrowd = dashboardApi.crowd.bind(dashboardApi)
+=======
+export const getHotels = hotelApi.list.bind(hotelApi)
+export const getHotelDetail = hotelApi.detail.bind(hotelApi)
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 
 // Admin
 export { adminApi } from './admin'
 
 // Search
 export { searchApi } from './search'
+<<<<<<< HEAD
+=======
+
+// Music
+export { musicApi } from './music'
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22

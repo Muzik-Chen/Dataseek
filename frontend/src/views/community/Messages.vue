@@ -1,5 +1,9 @@
 <template>
   <div class="messages-page">
+<<<<<<< HEAD
+=======
+    <BackButton />
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
     <div class="messages-container">
       <!-- 会话列表 -->
       <aside class="conv-sidebar">
@@ -78,6 +82,10 @@ import { ChatDotSquare } from '@element-plus/icons-vue'
 import { getConversations, getMessages, sendMessage } from '@/api'
 
 import { useUserStore } from '@/stores/user'
+<<<<<<< HEAD
+=======
+import BackButton from '@/components/common/BackButton.vue'
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 const userStore = useUserStore()
 const userId = computed(() => userStore.user?.id)
 const conversations = ref([])

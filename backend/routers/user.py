@@ -141,6 +141,7 @@ async def add_favorite(
     fav = UserFavorite(user_id=user_id, item_type=req.item_type, item_id=req.item_id)
     db.add(fav)
     await db.flush()
+<<<<<<< HEAD
     await db.refresh(fav)  # 加载 server_default 生成的 created_at，避免 MissingGreenlet
     return success(FavoriteOut.model_validate(fav).model_dump(), "收藏成功")
 
@@ -168,6 +169,11 @@ async def check_favorite(
     })
 
 
+=======
+    return success(FavoriteOut.model_validate(fav).model_dump(), "收藏成功")
+
+
+>>>>>>> 21e3c77773c3c723533ac403c37b7d726a663c22
 @router.delete("/favorites/{favorite_id}")
 async def remove_favorite(
     favorite_id: int,
