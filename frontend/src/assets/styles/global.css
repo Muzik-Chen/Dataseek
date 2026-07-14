@@ -276,35 +276,24 @@ button {
 }
 
 /* ========================================================================
-   Masonry / Waterfall Layout — 韩信点兵
+   Card Grid Layout — 每行固定列数
    ======================================================================== */
 
 .masonry-container {
-  column-count: 3;
-  column-gap: var(--masonry-gap);
-}
-
-.masonry-container > * {
-  break-inside: avoid;
-  margin-bottom: var(--masonry-gap);
-}
-
-/* When used as the direct wrapper of cards, remove margin-bottom from last items */
-.masonry-container::after {
-  content: '';
-  display: block;
-  height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--masonry-gap);
 }
 
 @media (max-width: 1023px) {
   .masonry-container {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 639px) {
   .masonry-container {
-    column-count: 1;
+    grid-template-columns: 1fr;
   }
 }
 

@@ -35,8 +35,8 @@ export const useTripStore = defineStore('trip', () => {
   const form = ref({
     origin: saved?.form?.origin || '',
     days: saved?.form?.days || 3,
-    budget: saved?.form?.budget || 'mid',
-    crowd_type: saved?.form?.crowd_type || 'solo',
+    budgetAmount: saved?.form?.budgetAmount || 2000,
+    crowd_type: saved?.form?.crowd_type || '2',
     preferences: saved?.form?.preferences || [],
     title: saved?.form?.title || '',
   })
@@ -74,7 +74,7 @@ export const useTripStore = defineStore('trip', () => {
 
   // ── 清除 ──
   function clearAll() {
-    form.value = { origin: '', days: 3, budget: 'mid', crowd_type: 'solo', preferences: [], title: '' }
+    form.value = { origin: '', days: 3, budgetAmount: 2000, crowd_type: '2', preferences: [], title: '' }
     streamPlans.value = []
     streamNarration.value = ''
     activeResultPlanId.value = null

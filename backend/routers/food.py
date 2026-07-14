@@ -1,6 +1,7 @@
 """
 美食模块路由 — 列表/详情/分类/AI推荐。
 """
+import os
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -138,3 +139,28 @@ async def recommend_foods(req: RecommendRequest, db: AsyncSession = Depends(get_
         recommendations=recommendations,
         summary=f"[{req.preference}] 为您找到 {len(recommendations)} 个推荐结果",
     ).model_dump())
+
+
+@router.get("/{food_id}/images")
+async def get_food_images(food_id: int, db: AsyncSession = Depends(get_db)):
+    """根据美食名称匹配 public/images/food/ 下的所有图片"""
+    food = (await db.execute(select(Food).where(Food.id == food_id))).scalar()
+    if not food:
+        raise HTTPException(status_code=404, detail="美食不存在")
+
+    name = food.name
+    scan_dir = os.path.join("frontend", "public", "images", "food")
+
+    images = []
+    if os.path.isdir(scan_dir):
+        for entry in sorted(os.listdir(scan_dir)):
+            entry_path = os.path.join(scan_dir, entry)
+            if not os.path.isdir(entry_path):
+                continue
+            if entry == name:
+                for fname in sorted(os.listdir(entry_path)):
+                    ext = os.path.splitext(fname)[1].lower()
+                    if ext in (".jpg", ".jpeg", ".png", ".webp"):
+                        images.append(f"/images/food/{name}/{fname}")
+
+    return success(images)

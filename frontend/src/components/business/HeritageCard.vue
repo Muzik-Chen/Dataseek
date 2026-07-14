@@ -27,8 +27,8 @@
           <span class="heritage-card__level" :class="'heritage-card__level--' + levelClass(item.category)">
             {{ item.category || '非遗' }}
           </span>
-          <span v-if="item.type" class="heritage-card__type">{{ item.type }}</span>
-          <span v-if="item.region" class="heritage-card__region">📍 {{ item.region }}</span>
+          <span class="heritage-card__type">{{ item.type || '未知类型' }}</span>
+          <span class="heritage-card__region">{{ item.region ? '📍 ' + item.region : '未知地区' }}</span>
         </div>
 
         <p class="heritage-card__desc">{{ item.description?.slice(0, 150) || '暂无描述' }}</p>
@@ -171,10 +171,9 @@ function levelClass(category) {
 
 /* ── Tags ── */
 .heritage-card__tags {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--space-xs);
-  flex-wrap: wrap;
   margin-bottom: var(--space-sm);
 }
 
@@ -183,6 +182,8 @@ function levelClass(category) {
   font-weight: var(--fw-semibold);
   padding: 2px 8px;
   border-radius: var(--radius-full);
+  text-align: center;
+  white-space: nowrap;
 }
 
 .heritage-card__level--national {
@@ -208,11 +209,13 @@ function levelClass(category) {
 .heritage-card__type {
   font-size: var(--fs-xs);
   color: var(--text-secondary);
+  text-align: center;
 }
 
 .heritage-card__region {
   font-size: var(--fs-xs);
   color: var(--text-secondary);
+  text-align: center;
 }
 
 /* ── Description ── */

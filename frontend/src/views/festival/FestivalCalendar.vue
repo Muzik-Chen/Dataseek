@@ -1,6 +1,20 @@
 <template>
   <div class="festival-page">
-    <BackButton />
+    <!-- 背景轮播 -->
+    <div class="bg-carousel">
+      <img
+        v-for="(bg, i) in bgImages"
+        :key="i"
+        :src="bg"
+        class="bg-slide"
+        :class="{ active: currentBg === i }"
+        alt=""
+      />
+      <div class="bg-overlay" />
+    </div>
+
+    <div class="content-box">
+      <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
       <h1 class="display-text--section">🎊 民俗节日日历</h1>
@@ -79,11 +93,12 @@
         @current-change="fetchEvents"
       />
     </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { getEvents } from '@/api'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
@@ -97,6 +112,21 @@ const keyword = ref('')
 const page = ref(1)
 const pageSize = 20
 const total = ref(0)
+
+// 背景轮播
+const bgImages = [
+  '/images/events/民俗bg (1).jpg',
+  '/images/events/民俗bg (2).jpg',
+  '/images/events/民俗bg (3).jpg',
+]
+const currentBg = ref(0)
+let bgTimer = null
+
+function startBgCarousel() {
+  bgTimer = setInterval(() => {
+    currentBg.value = (currentBg.value + 1) % bgImages.length
+  }, 5000)
+}
 
 const eventTypes = [
   { value: 'festival', label: '🎉 节日' },
@@ -157,14 +187,62 @@ async function fetchEvents() {
   }
 }
 
-onMounted(() => fetchEvents())
+onMounted(() => {
+  fetchEvents()
+  startBgCarousel()
+  document.body.classList.add('festival-page-open')
+})
+onBeforeUnmount(() => {
+  clearInterval(bgTimer)
+  document.body.classList.remove('festival-page-open')
+})
 </script>
 
 <style scoped>
+/* ---- 背景轮播 ---- */
+.bg-carousel {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+.bg-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.bg-slide.active {
+  opacity: 1;
+}
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+}
+
 .festival-page {
-  max-width: 900px;
-  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.content-box {
+  margin: 50px 100px;
   padding: var(--space-2xl) var(--space-md);
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(4px);
 }
 
 .page-hero {
@@ -173,14 +251,14 @@ onMounted(() => fetchEvents())
 }
 
 .page-hero h1 {
-  font-size: var(--fs-3xl);
+  font-size: 64px;
   color: var(--ink);
   margin: 0 0 var(--space-sm);
 }
 
 .page-hero p {
   color: var(--muted);
-  font-size: var(--fs-base);
+  font-size: 1.5rem;
   margin: 0 0 var(--space-md);
 }
 
@@ -191,8 +269,9 @@ onMounted(() => fetchEvents())
   flex-wrap: wrap;
   margin-bottom: var(--space-xl);
   padding: var(--space-md) var(--space-lg);
-  background: var(--bg-surface-alt);
+  background: rgba(255,255,255,0.4);
   border-radius: var(--radius-lg);
+  backdrop-filter: blur(2px);
 }
 
 /* tea-pill styles from global.css */
@@ -209,12 +288,13 @@ onMounted(() => fetchEvents())
   display: flex;
   align-items: center;
   gap: var(--space-lg);
-  background: var(--surface);
+  background: rgba(255,255,255,0.55);
   border-radius: 12px;
   padding: var(--space-lg);
   box-shadow: 0 2px 8px oklch(0 0 0 / 0.03);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  backdrop-filter: blur(2px);
 }
 
 .event-card:hover {
@@ -287,9 +367,23 @@ onMounted(() => fetchEvents())
 }
 
 @media (max-width: 640px) {
+  .content-box {
+    margin: 16px 12px;
+    padding: var(--space-lg) var(--space-sm);
+  }
+  .page-hero h1 {
+    font-size: 32px;
+  }
   .event-card { flex-direction: column; }
   .event-date-badge { flex-direction: row; gap: 4px; height: auto; padding: 8px 16px; width: auto; }
   .event-body { flex-direction: column; }
   .event-thumb { width: 100%; height: 160px; }
+}
+</style>
+
+<style>
+body.festival-page-open,
+body.festival-page-open #app {
+  background: transparent !important;
 }
 </style>

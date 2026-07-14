@@ -1,5 +1,10 @@
 <template>
   <div class="heritage-detail-page">
+    <!-- 装饰背景 -->
+    <img class="deco-bg deco-bg--1" src="/images/events/Heritage/非遗二级bg (1).jpg" alt="" />
+    <img class="deco-bg deco-bg--2" src="/images/events/Heritage/非遗二级bg (2).jpg" alt="" />
+    <img class="deco-bg deco-bg--3" src="/images/events/Heritage/非遗二级bg (3).jpg" alt="" />
+
     <LoadingSkeleton v-if="loading" type="detail" />
 
     <div v-else-if="error" class="error-state">
@@ -19,10 +24,19 @@
         </el-button>
       </div>
 
-      <!-- Zone 1: 标题 + 传承人卡片 + 标签 -->
+      <!-- Zone 1: 标题 + 传承人 + 标签 -->
       <div class="zone-header">
         <div class="header-left">
-          <h1 class="heritage-title">{{ heritage.name }}</h1>
+          <div class="title-row">
+            <h1 class="heritage-title">{{ heritage.name }}</h1>
+            <div v-if="heritage.inheritor" class="inheritor-card">
+              <span class="inheritor-icon">🧑‍🎓</span>
+              <div class="inheritor-info">
+                <span class="inheritor-name">{{ heritage.inheritor }}</span>
+                <span class="inheritor-label">代表性传承人</span>
+              </div>
+            </div>
+          </div>
           <div class="meta-line">
             <span class="level-tag" :class="levelClass">{{ heritage.category }}</span>
             <span class="type-tag">{{ heritage.type }}</span>
@@ -31,13 +45,6 @@
           </div>
         </div>
         <div class="header-right">
-          <div v-if="heritage.inheritor" class="inheritor-card">
-            <span class="inheritor-icon">🧑‍🎓</span>
-            <div class="inheritor-info">
-              <span class="inheritor-name">{{ heritage.inheritor }}</span>
-              <span class="inheritor-label">代表性传承人</span>
-            </div>
-          </div>
           <el-button
             :type="isFavorited ? 'danger' : 'default'"
             :icon="isFavorited ? StarFilled : Star"
@@ -53,14 +60,37 @@
       <!-- Zone 2: 左图右文 -->
       <div class="zone-content">
         <div class="content-left">
-          <div class="image-card" @click="heritage.image_url && viewer.open([heritage.image_url])">
-            <el-image v-if="heritage.image_url" :src="heritage.image_url" fit="cover" class="main-img" />
-            <div v-else class="img-placeholder">🎭</div>
-            <div v-if="heritage.image_url" class="img-overlay">
+          <!-- 主图轮播 -->
+          <div class="image-card" v-if="allImages.length > 0">
+            <div class="image-card__track" :style="{ transform: `translateX(-${mainImgIndex * 100}%)` }">
+              <img
+                v-for="(img, i) in allImages"
+                :key="i"
+                :src="img"
+                :alt="`${heritage.name} - ${i + 1}`"
+                class="main-img"
+              />
+            </div>
+            <!-- 切换箭头 -->
+            <button
+              v-if="allImages.length > 1"
+              class="img-arrow img-arrow--left"
+              @click.stop="prevMainImg"
+            >◀</button>
+            <button
+              v-if="allImages.length > 1"
+              class="img-arrow img-arrow--right"
+              @click.stop="nextMainImg"
+            >▶</button>
+            <!-- 图片计数器 -->
+            <span v-if="allImages.length > 1" class="img-counter">{{ mainImgIndex + 1 }} / {{ allImages.length }}</span>
+            <!-- 点击放大遮罩 -->
+            <div class="img-overlay" @click="openViewer">
               <el-icon :size="24"><ZoomIn /></el-icon>
               <span>点击放大</span>
             </div>
           </div>
+          <div v-else class="img-placeholder">🎭</div>
           <!-- 非遗印章 -->
           <div class="seal-badge" aria-hidden="true">
             <span>非遗<br>传承</span>
@@ -104,16 +134,54 @@
           </video>
         </div>
       </section>
+
+      <!-- 图片轮播 -->
+      <section v-if="galleryImages.length > 0" class="zone-gallery">
+        <h2>🖼️ 图片展示</h2>
+        <div class="gallery-container">
+          <button class="gallery-arrow gallery-arrow--left" @click="prevSlide" :disabled="galleryImages.length <= 1">
+            ◀
+          </button>
+          <div class="gallery-viewport">
+            <div
+              class="gallery-track"
+              :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
+            >
+              <div
+                v-for="(img, i) in galleryImages"
+                :key="i"
+                class="gallery-slide"
+                @click="viewer.open(galleryImages, i)"
+              >
+                <img :src="img" :alt="`${heritage.name} - ${i + 1}`" />
+              </div>
+            </div>
+          </div>
+          <button class="gallery-arrow gallery-arrow--right" @click="nextSlide" :disabled="galleryImages.length <= 1">
+            ▶
+          </button>
+        </div>
+        <div class="gallery-dots">
+          <span
+            v-for="(img, i) in galleryImages"
+            :key="i"
+            class="gallery-dot"
+            :class="{ active: i === currentSlide }"
+            @click="currentSlide = i"
+          />
+        </div>
+      </section>
+
     </template>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Star, StarFilled, ArrowLeft, ZoomIn } from '@element-plus/icons-vue'
-import { getHeritageDetail, addFavorite, removeFavorite, checkFavorite } from '@/api'
+import { getHeritageDetail, addFavorite, removeFavorite, checkFavorite, getHeritageImages } from '@/api'
 import { useUserStore } from '@/stores/user'
 import LoadingSkeleton from '@/components/common/LoadingSkeleton.vue'
 import ImageViewer from '@/components/common/ImageViewer.vue'
@@ -128,6 +196,38 @@ const loading = ref(true)
 const error = ref('')
 const isFavorited = ref(false)
 const favoriteId = ref(null)
+
+// 图片轮播
+const galleryImages = ref([])
+const currentSlide = ref(0)
+const mainImgIndex = ref(0)
+
+// 合并所有图片：galleryImages优先，fallback到heritage.image_url
+const allImages = computed(() => {
+  if (galleryImages.value.length > 0) return galleryImages.value
+  if (heritage.value?.image_url) return [heritage.value.image_url]
+  return []
+})
+
+function prevMainImg() {
+  mainImgIndex.value = (mainImgIndex.value - 1 + allImages.value.length) % allImages.value.length
+}
+function nextMainImg() {
+  mainImgIndex.value = (mainImgIndex.value + 1) % allImages.value.length
+}
+function openViewer() {
+  if (allImages.value.length > 0) {
+    viewer.value.open(allImages.value, mainImgIndex.value)
+  }
+}
+
+function prevSlide() {
+  currentSlide.value = (currentSlide.value - 1 + galleryImages.value.length) % galleryImages.value.length
+}
+
+function nextSlide() {
+  currentSlide.value = (currentSlide.value + 1) % galleryImages.value.length
+}
 
 const levelClass = computed(() => {
   const cat = heritage.value?.category || ''
@@ -146,11 +246,20 @@ async function fetchDetail() {
     if (userStore.isLoggedIn) {
       await checkFavoriteStatus()
     }
+    await fetchImages()
   } catch (e) {
     error.value = e.message || '加载失败'
   } finally {
     loading.value = false
   }
+}
+
+async function fetchImages() {
+  try {
+    const res = await getHeritageImages(route.params.id)
+    galleryImages.value = res || []
+    currentSlide.value = 0
+  } catch { /* ignore */ }
 }
 
 async function checkFavoriteStatus() {
@@ -184,7 +293,13 @@ async function toggleFavorite() {
   }
 }
 
-onMounted(() => fetchDetail())
+onMounted(() => {
+  document.body.classList.add('heritage-detail-open')
+  fetchDetail()
+})
+onBeforeUnmount(() => {
+  document.body.classList.remove('heritage-detail-open')
+})
 </script>
 
 <style scoped>
@@ -192,6 +307,60 @@ onMounted(() => fetchDetail())
   max-width: var(--content-wide, 1200px);
   margin: 0 auto;
   padding: var(--space-lg) var(--space-md) var(--space-xl);
+  background: transparent;
+}
+
+/* ---- 装饰背景图 ---- */
+.deco-bg {
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.deco-bg--1 {
+  bottom: 0;
+  left: -100px;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+.deco-bg--2 {
+  top: calc(50% - 200px);
+  left: 0;
+  transform: translateY(-50%);
+  max-height: 52.5vh;
+  object-fit: contain;
+}
+
+.deco-bg--3 {
+  bottom: 0;
+  right: 0;
+  max-height: 60vh;
+  object-fit: contain;
+}
+
+/* 让内部区块半透明，透出装饰背景 */
+.zone-header,
+.back-nav,
+.desc-block,
+.detail-block {
+  background: rgba(255,255,255,0.5) !important;
+  backdrop-filter: blur(2px);
+  border-radius: var(--radius-md);
+}
+
+.zone-gallery {
+  background: rgba(255,255,255,0.5) !important;
+  backdrop-filter: blur(2px);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.img-placeholder,
+.error-state {
+  background: rgba(255,255,255,0.5) !important;
+  backdrop-filter: blur(2px);
 }
 
 /* ---- 返回导航 ---- */
@@ -215,12 +384,20 @@ onMounted(() => fetchDetail())
   min-width: 0;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
 .heritage-title {
   font-family: var(--font-display);
-  font-size: var(--fs-3xl);
+  font-size: 45px;
   font-weight: var(--fw-black);
   color: var(--ink);
-  margin: 0 0 var(--space-md);
+  margin: 0;
   line-height: 1.3;
 }
 
@@ -265,14 +442,14 @@ onMounted(() => fetchDetail())
   font-size: var(--fs-sm);
 }
 
-/* 传承人卡片 */
+/* 收藏按钮 */
 .header-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-md);
+  align-items: center;
   flex-shrink: 0;
 }
+
+/* 传承人卡片 */
 
 .inheritor-card {
   display: flex;
@@ -322,6 +499,7 @@ onMounted(() => fetchDetail())
 }
 
 .image-card {
+  aspect-ratio: 3 / 4;
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -335,15 +513,64 @@ onMounted(() => fetchDetail())
   box-shadow: var(--shadow-lg);
 }
 
+.image-card__track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
 .main-img {
+  min-width: 100%;
   width: 100%;
-  height: 320px;
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
+.img-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+  z-index: 3;
+}
+
+.image-card:hover .img-arrow { opacity: 1; }
+.img-arrow:hover { background: rgba(0,0,0,0.7); }
+.img-arrow--left  { left: 8px; }
+.img-arrow--right { right: 8px; }
+
+.img-counter {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  font-size: 11px;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.image-card:hover .img-counter { opacity: 1; }
+
 .img-placeholder {
   width: 100%;
-  height: 320px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -467,6 +694,103 @@ onMounted(() => fetchDetail())
   border-radius: var(--radius-lg);
 }
 
+/* ---- 图片轮播 ---- */
+.zone-gallery {
+  padding-top: var(--space-2xl);
+  border-top: 1px solid oklch(0 0 0 / 0.06);
+}
+
+.zone-gallery h2 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  color: var(--ink);
+  margin: 0 0 var(--space-lg);
+}
+
+.gallery-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.gallery-arrow {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: 1px solid oklch(0 0 0 / 0.1);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--ink);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.gallery-arrow:hover:not(:disabled) {
+  background: var(--brand-primary);
+  color: #fff;
+  border-color: var(--brand-primary);
+}
+
+.gallery-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.gallery-viewport {
+  flex: 1;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.gallery-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gallery-slide {
+  min-width: 100%;
+  aspect-ratio: 16 / 9;
+  cursor: pointer;
+}
+
+.gallery-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.gallery-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: oklch(0 0 0 / 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.gallery-dot.active {
+  background: var(--brand-primary);
+  width: 28px;
+  border-radius: 5px;
+}
+
+.gallery-dot:hover:not(.active) {
+  background: oklch(0 0 0 / 0.4);
+}
+
 /* ---- 错误状态 ---- */
 .error-state {
   padding: var(--space-3xl);
@@ -477,22 +801,21 @@ onMounted(() => fetchDetail())
   .content-left {
     width: 280px;
   }
-
-  .main-img, .img-placeholder {
-    height: 260px;
-  }
 }
 
 @media (max-width: 768px) {
+  .title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .zone-header {
     flex-direction: column;
   }
 
   .header-right {
-    flex-direction: row;
-    align-items: center;
     width: 100%;
-    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .zone-content {
@@ -501,10 +824,6 @@ onMounted(() => fetchDetail())
 
   .content-left {
     width: 100%;
-  }
-
-  .main-img, .img-placeholder {
-    height: 240px;
   }
 
   .detail-grid {
@@ -524,5 +843,16 @@ onMounted(() => fetchDetail())
   .detail-grid {
     grid-template-columns: 1fr;
   }
+}
+</style>
+
+<style>
+body.heritage-detail-open,
+body.heritage-detail-open #app {
+  background: transparent !important;
+}
+body.heritage-detail-open .app-footer {
+  position: relative;
+  z-index: 1;
 }
 </style>

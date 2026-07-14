@@ -5,6 +5,7 @@ export const foodApi = {
   detail(id) { return api.get(`/foods/${id}`) },
   categories() { return api.get('/foods/categories') },
   recommend(preference) { return api.post('/foods/recommend', { preference }) },
+  images(id) { return api.get(`/foods/${id}/images`) },
 }
 
 export default foodApi

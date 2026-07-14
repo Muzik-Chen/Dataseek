@@ -25,12 +25,14 @@ export const getFoods = foodApi.list.bind(foodApi)
 export const getFoodDetail = foodApi.detail.bind(foodApi)
 export const getFoodCategories = foodApi.categories.bind(foodApi)
 export const recommendFoods = foodApi.recommend.bind(foodApi)
+export const getFoodImages = foodApi.images.bind(foodApi)
 
 // Heritage
 import { heritageApi } from './heritage'
 export { heritageApi }
 export const getHeritages = heritageApi.list.bind(heritageApi)
 export const getHeritageDetail = heritageApi.detail.bind(heritageApi)
+export const getHeritageImages = heritageApi.images.bind(heritageApi)
 
 // Events
 import { eventApi } from './event'

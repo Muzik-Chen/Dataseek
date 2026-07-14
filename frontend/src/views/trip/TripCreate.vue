@@ -54,25 +54,34 @@
 
             <div class="form-group">
               <label>💰 预算档位</label>
-              <el-radio-group v-model="form.budget" size="large">
-                <el-radio-button value="low">💰 经济型</el-radio-button>
-                <el-radio-button value="mid">💰💰 舒适型</el-radio-button>
-                <el-radio-button value="high">💰💰💰 豪华型</el-radio-button>
-              </el-radio-group>
+              <div class="budget-slider-wrap">
+                <el-slider
+                  v-model="form.budgetAmount"
+                  :min="500"
+                  :max="6000"
+                  :step="100"
+                  :marks="budgetMarks"
+                  show-input
+                  :format-tooltip="formatBudgetTooltip"
+                  size="large"
+                />
+                <div class="budget-type-badge" :class="'budget-' + form.budget">
+                  {{ budgetTypeLabel }}
+                </div>
+              </div>
+              <span class="field-hint">拖动滑块调整预算，系统自动匹配档位</span>
             </div>
 
             <div class="form-group">
-              <label>👥 出行人群</label>
-              <div class="crowd-cards">
-                <div
-                  v-for="c in crowdOptions" :key="c.value"
-                  :class="['crowd-card', { selected: form.crowd_type === c.value }]"
-                  @click="form.crowd_type = c.value"
+              <label>👥 出行人数</label>
+              <div class="crowd-number-grid">
+                <button
+                  v-for="n in crowdNumberOptions" :key="n.value"
+                  :class="['crowd-number-btn', { selected: form.crowd_type === n.value }]"
+                  @click="form.crowd_type = n.value"
                 >
-                  <span class="crowd-icon">{{ c.icon }}</span>
-                  <strong>{{ c.label }}</strong>
-                  <p>{{ c.desc }}</p>
-                </div>
+                  {{ n.label }}
+                </button>
               </div>
             </div>
 
@@ -84,7 +93,6 @@
                   :class="['pref-card', { on: form.preferences.includes(p.value) }]"
                   @click="togglePref(p.value)"
                 >
-                  <span class="pref-icon">{{ p.icon }}</span>
                   <span class="pref-label">{{ p.label }}</span>
                 </div>
               </div>
@@ -356,11 +364,33 @@ const form = reactive({
   title: tripStore.hasSavedPlans ? tripStore.form.title : '',
   origin: tripStore.hasSavedPlans ? tripStore.form.origin : '广州',
   days: tripStore.hasSavedPlans ? tripStore.form.days : 3,
-  budget: tripStore.hasSavedPlans ? tripStore.form.budget : 'mid',
-  crowd_type: tripStore.hasSavedPlans ? tripStore.form.crowd_type : 'solo',
+  budgetAmount: tripStore.hasSavedPlans && tripStore.form.budgetAmount ? tripStore.form.budgetAmount : 2000,
+  crowd_type: tripStore.hasSavedPlans ? tripStore.form.crowd_type : '2',
   preferences: tripStore.hasSavedPlans && tripStore.form.preferences?.length
     ? tripStore.form.preferences : ['美食', '非遗'],
+  get budget() {
+    if (this.budgetAmount <= 2000) return 'low'
+    if (this.budgetAmount <= 4500) return 'mid'
+    return 'high'
+  },
 })
+
+const budgetTypeLabel = computed(() => {
+  if (form.budget === 'low') return '经济型'
+  if (form.budget === 'mid') return '舒适型'
+  return '豪华型'
+})
+
+const budgetMarks = {
+  500: '500',
+  2000: '2000',
+  4500: '4500',
+  6000: '6000',
+}
+
+function formatBudgetTooltip(val) {
+  return '¥' + val + ' / 人'
+}
 
 const canGenerate = computed(() =>
   form.days >= 1 && form.days <= 14 &&
@@ -501,20 +531,23 @@ const routeLegend = computed(() => {
 })
 
 // ── 选项数据 ──
-const crowdOptions = [
-  { value: 'solo', icon: '🧑', label: '独自旅行', desc: '自由探索，节奏随性' },
-  { value: 'couple', icon: '💑', label: '情侣出游', desc: '浪漫景点、美食打卡' },
-  { value: 'family', icon: '👨‍👩‍👧', label: '家庭出游', desc: '老少皆宜、轻松舒适' },
-  { value: 'friends', icon: '👫', label: '朋友结伴', desc: '热闹体验、深度探索' },
+const crowdNumberOptions = [
+  { value: '1', label: '1人' },
+  { value: '2', label: '2人' },
+  { value: '3', label: '3人' },
+  { value: '4', label: '4人' },
+  { value: '5', label: '5人' },
+  { value: '6', label: '6人' },
+  { value: '7+', label: '7人及以上' },
 ]
 
 const prefOptions = [
-  { value: '美食', icon: '🍲', label: '美食探索' },
-  { value: '非遗', icon: '🎭', label: '非遗文化' },
-  { value: '自然', icon: '🏞️', label: '自然风光' },
-  { value: '历史', icon: '🏛️', label: '历史古迹' },
-  { value: '民俗', icon: '🎊', label: '民俗体验' },
-  { value: '购物', icon: '🛍️', label: '特产购物' },
+  { value: '美食', label: '美食探索' },
+  { value: '非遗', label: '非遗文化' },
+  { value: '自然', label: '自然风光' },
+  { value: '历史', label: '历史古迹' },
+  { value: '民俗', label: '民俗体验' },
+  { value: '购物', label: '特产购物' },
 ]
 
 function togglePref(val) {
@@ -1106,40 +1139,60 @@ function mockPlan() {
   vertical-align: middle;
 }
 
-/* 人群卡片 */
-.crowd-cards {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+/* 预算滑块 */
+.budget-slider-wrap {
+  padding: 8px 4px 0;
+}
+.budget-type-badge {
+  margin-top: 8px;
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  transition: all 0.3s;
+}
+.budget-type-badge.budget-low {
+  background: linear-gradient(135deg, #67c23a, #529b2e);
+}
+.budget-type-badge.budget-mid {
+  background: linear-gradient(135deg, #e6a23c, #cf8e2e);
+}
+.budget-type-badge.budget-high {
+  background: linear-gradient(135deg, #c4565d, #b03a42);
 }
 
-.crowd-card {
+/* 人数选择 */
+.crowd-number-grid {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.crowd-number-btn {
+  flex: 1;
+  min-width: 56px;
   padding: 12px 8px;
   border: 2px solid oklch(0 0 0 / 0.08);
   border-radius: 12px;
   cursor: pointer;
+  background: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
   transition: all 0.2s;
   text-align: center;
 }
-
-.crowd-card:hover {
+.crowd-number-btn:hover {
   border-color: oklch(0.55 0.18 28 / 0.3);
   background: oklch(0.55 0.18 28 / 0.03);
 }
-
-.crowd-card.selected {
+.crowd-number-btn.selected {
   border-color: var(--brand-red, oklch(0.53 0.22 25));
   background: oklch(0.53 0.22 25 / 0.06);
+  color: var(--brand-red, oklch(0.53 0.22 25));
   box-shadow: 0 0 0 3px oklch(0.53 0.22 25 / 0.08);
 }
-
-.crowd-icon { font-size: 28px; }
-.crowd-card strong { font-size: 0.82rem; color: var(--ink); }
-.crowd-card p { font-size: 0.7rem; color: var(--muted); margin: 0; }
 
 /* 偏好网格 */
 .pref-grid {
@@ -1150,10 +1203,9 @@ function mockPlan() {
 
 .pref-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 12px 6px;
+  justify-content: center;
+  padding: 14px 8px;
   border: 2px solid oklch(0 0 0 / 0.08);
   border-radius: 12px;
   cursor: pointer;
@@ -1169,8 +1221,7 @@ function mockPlan() {
   background: oklch(0.53 0.22 25 / 0.06);
 }
 
-.pref-icon { font-size: 22px; }
-.pref-label { font-size: 0.72rem; font-weight: 600; color: var(--ink); }
+.pref-label { font-size: 0.95rem; font-weight: 700; color: var(--ink); }
 
 .pref-warning {
   margin-top: 8px;

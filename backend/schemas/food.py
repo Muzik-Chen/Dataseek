@@ -15,7 +15,7 @@ class FoodOut(BaseModel):
     address: str = ""
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-    price_range: str = ""
+    price_range: Optional[str] = None
     tags: Optional[list[str]] = None
     is_recommended: bool = False
     view_count: int = 0

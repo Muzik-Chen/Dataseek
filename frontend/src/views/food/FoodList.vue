@@ -1,6 +1,9 @@
 <template>
   <div class="food-list-page">
-    <BackButton />
+    <!-- 背景图 -->
+    <div class="food-bg"></div>
+    <div class="content-box">
+      <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
       <h1 class="display-text--section">🍲 潮汕美食</h1>
@@ -69,11 +72,12 @@
       :page-size="pageSize"
       @change="fetchFoods"
     />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { getFoods, getFoodCategories } from '@/api'
 import FoodCard from '@/components/business/FoodCard.vue'
@@ -130,16 +134,36 @@ async function fetchCategories() {
 }
 
 onMounted(() => {
+  document.body.classList.add('food-list-open')
   fetchCategories()
   fetchFoods()
+})
+
+onUnmounted(() => {
+  document.body.classList.remove('food-list-open')
 })
 </script>
 
 <style scoped>
 .food-list-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.food-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: url('/images/美食bg.jpg') center/cover no-repeat;
+}
+
+.content-box {
+  margin: 50px 100px;
   padding: var(--space-2xl) var(--space-md);
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(4px);
 }
 
 .page-hero {
@@ -148,14 +172,14 @@ onMounted(() => {
 }
 
 .page-hero h1 {
-  font-size: var(--fs-3xl);
+  font-size: 64px;
   color: var(--ink);
   margin: 0 0 var(--space-sm);
 }
 
 .page-hero p {
   color: var(--muted);
-  font-size: var(--fs-base);
+  font-size: 1.5rem;
   margin: 0 0 var(--space-md);
 }
 
@@ -189,6 +213,13 @@ onMounted(() => {
 /* Masonry is provided by global .masonry-container */
 
 @media (max-width: 639px) {
+  .content-box {
+    margin: 16px 12px;
+    padding: var(--space-lg) var(--space-sm);
+  }
+  .page-hero h1 {
+    font-size: 32px;
+  }
   .toolbar {
     flex-direction: column;
   }
@@ -198,5 +229,12 @@ onMounted(() => {
   .toolbar-actions {
     margin-left: 0;
   }
+}
+</style>
+
+<style>
+body.food-list-open,
+body.food-list-open #app {
+  background: transparent !important;
 }
 </style>

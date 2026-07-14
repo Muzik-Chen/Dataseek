@@ -1,9 +1,23 @@
 <template>
   <div class="heritage-list-page">
-    <BackButton />
+    <!-- 背景轮播 -->
+    <div class="bg-carousel">
+      <img
+        v-for="(bg, i) in bgImages"
+        :key="i"
+        :src="bg"
+        class="bg-slide"
+        :class="{ active: currentBg === i }"
+        alt=""
+      />
+      <div class="bg-overlay" />
+    </div>
+
+    <div class="content-box">
+      <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
-      <h1 class="display-text--section">🎭 非遗民俗</h1>
+      <h1 class="display-text--section">非遗文化</h1>
       <p>探索潮汕千年传承的非物质文化遗产</p>
       <div class="section-divider section-divider--left"></div>
     </div>
@@ -73,11 +87,12 @@
       :page-size="pageSize"
       @change="fetchData"
     />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
@@ -92,6 +107,21 @@ import BackButton from '@/components/common/BackButton.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
+
+// 背景轮播
+const bgImages = [
+  '/images/events/非遗bg3.jpg',
+  '/images/events/非遗bg1.jpg',
+  '/images/events/非遗bg2.jpg',
+]
+const currentBg = ref(0)
+let bgTimer = null
+
+function startBgCarousel() {
+  bgTimer = setInterval(() => {
+    currentBg.value = (currentBg.value + 1) % bgImages.length
+  }, 5000)
+}
 
 const loading = ref(true)
 const items = ref([])
@@ -144,14 +174,74 @@ async function handleFavorite(item) {
   }
 }
 
-onMounted(() => fetchData())
+onMounted(() => {
+  fetchData()
+  startBgCarousel()
+  document.body.classList.add('heritage-list-open')
+})
+
+onBeforeUnmount(() => {
+  clearInterval(bgTimer)
+  document.body.classList.remove('heritage-list-open')
+})
 </script>
 
 <style scoped>
+/* ---- 背景轮播 ---- */
+.bg-carousel {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+.bg-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.bg-slide.active {
+  opacity: 1;
+}
+
+.bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  pointer-events: none;
+}
+
 .heritage-list-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.content-box {
+  margin: 50px 100px;
   padding: var(--space-2xl) var(--space-md);
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 640px) {
+  .content-box {
+    margin: 16px 12px;
+    padding: var(--space-lg) var(--space-sm);
+  }
+  .page-hero h1 {
+    font-size: 32px;
+  }
 }
 
 .page-hero {
@@ -160,14 +250,14 @@ onMounted(() => fetchData())
 }
 
 .page-hero h1 {
-  font-size: var(--fs-3xl);
+  font-size: 64px;
   color: var(--ink);
   margin: 0 0 var(--space-sm);
 }
 
 .page-hero p {
   color: var(--muted);
-  font-size: var(--fs-base);
+  font-size: 1.5rem;
   margin: 0 0 var(--space-md);
 }
 
@@ -206,4 +296,11 @@ onMounted(() => fetchData())
 }
 
 /* Masonry is provided by global .masonry-container */
+</style>
+
+<style>
+body.heritage-list-open,
+body.heritage-list-open #app {
+  background: transparent !important;
+}
 </style>
