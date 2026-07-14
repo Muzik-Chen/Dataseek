@@ -130,10 +130,10 @@ const filterType = ref('')
 const keyword = ref('')
 const sort = ref('created_at')
 const page = ref(1)
-const pageSize = 20
+const pageSize = 15
 const total = ref(0)
 
-const levels = ['国家级', '省级', '市级']
+const levels = ['国家级', '省级']
 const types = ['传统戏剧', '传统舞蹈', '传统美术', '传统技艺', '民俗', '传统音乐']
 
 const sortOptions = [

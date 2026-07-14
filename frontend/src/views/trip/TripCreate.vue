@@ -1141,7 +1141,8 @@ function mockPlan() {
 
 /* 预算滑块 */
 .budget-slider-wrap {
-  padding: 8px 4px 0;
+  padding: 8px 8px 0;
+  margin: 0 2px;
 }
 .budget-type-badge {
   margin-top: 8px;

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="home-page">
     <!-- ===== Hero · 全屏轮播 · 品牌认知 ===== -->
     <section
@@ -13,7 +13,7 @@
           :key="idx"
           class="hero-slide"
           :class="{ active: currentHero === idx }"
-          :style="{ backgroundImage: `url(${slide.image})` }"
+          :style="{ backgroundImage: `url(${slide.image})`, backgroundPosition: slide.position || 'center' }"
         >
           <div class="hero-overlay"></div>
           <div class="hero-slide-caption">
@@ -219,17 +219,18 @@ const { init: initMusic } = useMusic()
 const currentHero = ref(0)
 const heroSlides = [
   {
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1400&h=700&fit=crop',
+    image: '/images/homehero1.png',
     title: '潮汕美食',
     desc: '牛肉火锅、生腌海鲜、粿品小吃——舌尖上的潮汕，是千年闽粤文化的味觉沉淀，每一口都是时光的馈赠。',
   },
   {
-    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1400&h=700&fit=crop',
+    image: '/images/homehero2.png',
     title: '非遗传承',
     desc: '英歌舞的豪迈、工夫茶的从容、潮剧的婉转——这些活着的文化遗产，至今仍在潮汕大地上生生不息。',
+    position: 'center calc(50% - 100px)',
   },
   {
-    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1400&h=700&fit=crop',
+    image: '/images/homehero3.png',
     title: '岁时节庆',
     desc: '营老爷巡游、元宵灯会、端午赛龙舟——潮汕人用最热烈的方式，守护着一方水土的信仰与温情。',
   },
@@ -308,15 +309,15 @@ async function loadDiscoveryMap() {
 const categories = [
   {
     path: '/foods', label: '美食推荐', desc: '牛肉火锅 · 粿品 · 生腌',
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&h=400&fit=crop',
+    image: '/images/美食推荐.png',
   },
   {
     path: '/heritages', label: '非遗民俗', desc: '英歌舞 · 工夫茶 · 潮剧',
-    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=400&fit=crop',
+    image: '/images/非遗民俗.png',
   },
   {
     path: '/festival', label: '岁时节庆', desc: '营老爷 · 灯会 · 龙舟',
-    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=400&fit=crop',
+    image: '/images/岁时节庆.png',
   },
   {
     path: '/trip/create', label: '行程规划', desc: 'AI定制 · 三日经典路线',
@@ -324,7 +325,7 @@ const categories = [
   },
   {
     path: '/community', label: '社区动态', desc: '探店笔记 · 文化讨论',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop',
+    image: '/images/社区动态.png',
   },
   {
     path: '/dashboard', label: '数据大屏', desc: '实时人流 · 热门排行',
@@ -937,6 +938,41 @@ const MOCK_HERITAGES = [
 .feed-featured {
   grid-column: span 2;
   grid-row: span 2;
+}
+
+.feed-featured :deep(.food-card--single) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.feed-featured :deep(.food-card__image) {
+  flex: 1;
+  min-height: 600px;
+}
+
+.feed-featured :deep(.food-card__body) {
+  flex-shrink: 0;
+}
+
+.feed-featured :deep(.heritage-card__media) {
+  width: 100%;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.feed-featured :deep(.heritage-card__img) {
+  object-position: 50% calc(50% + 150px);
+}
+
+.feed-featured :deep(.heritage-card__inner) {
+  flex-direction: column;
+}
+
+.feed-featured :deep(.heritage-card) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .feed-grid-skeleton {

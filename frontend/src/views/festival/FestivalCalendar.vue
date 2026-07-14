@@ -17,7 +17,7 @@
       <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
-      <h1 class="display-text--section">🎊 民俗节日日历</h1>
+      <h1 class="display-text--section">民俗节日日历</h1>
       <p>了解潮汕一年四季的重要民俗活动和节日</p>
       <div class="section-divider section-divider--left"></div>
     </div>

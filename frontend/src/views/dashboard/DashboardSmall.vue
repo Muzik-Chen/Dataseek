@@ -14,13 +14,6 @@
     </div>
     <div v-else class="overview-cards">
       <div class="ov-card">
-        <span class="ov-icon">👥</span>
-        <div class="ov-info">
-          <strong>{{ overview.total_users }}</strong>
-          <span>注册用户</span>
-        </div>
-      </div>
-      <div class="ov-card">
         <span class="ov-icon">🍲</span>
         <div class="ov-info">
           <strong>{{ overview.total_foods }}</strong>

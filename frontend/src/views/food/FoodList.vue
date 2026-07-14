@@ -6,7 +6,7 @@
       <BackButton />
     <!-- 页面标题 · 不对称左对齐 -->
     <div class="page-hero">
-      <h1 class="display-text--section">🍲 潮汕美食</h1>
+      <h1 class="display-text--section">潮汕美食</h1>
       <p>从街头小吃到老字号，品味最地道的潮汕味道</p>
       <div class="section-divider section-divider--left"></div>
     </div>
@@ -95,7 +95,7 @@ const keyword = ref('')
 const foodType = ref('')
 const sort = ref('view_count')
 const page = ref(1)
-const pageSize = 20
+const pageSize = 15
 const total = ref(0)
 
 const sortOptions = [

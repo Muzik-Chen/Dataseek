@@ -1,9 +1,12 @@
 <template>
   <div class="community-page">
+    <!-- 背景图 -->
+    <div class="community-bg"></div>
+    <div class="community-content">
     <BackButton />
     <div class="page-header">
       <div>
-        <h1 class="display-text--section">💬 社区推荐</h1>
+        <h1 class="display-text--section">社区推荐</h1>
         <p>发现潮汕好去处，分享你的探索故事</p>
         <div class="section-divider section-divider--left"></div>
       </div>
@@ -52,11 +55,12 @@
       :page-size="pageSize"
       @change="fetchPosts"
     />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Edit } from '@element-plus/icons-vue'
 import { getPosts } from '@/api'
@@ -111,14 +115,39 @@ async function fetchPosts() {
   }
 }
 
-onMounted(() => fetchPosts())
+onMounted(() => {
+  document.body.classList.add('community-page-open')
+  fetchPosts()
+})
+
+onUnmounted(() => {
+  document.body.classList.remove('community-page-open')
+})
 </script>
 
 <style scoped>
 .community-page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+.community-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: url('/images/社区bg.png') center/cover no-repeat;
+}
+
+.community-content {
   max-width: 800px;
   margin: 0 auto;
   padding: var(--space-2xl) var(--space-md);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(6px);
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 .page-header {
@@ -150,8 +179,19 @@ onMounted(() => fetchPosts())
 }
 
 @media (max-width: 640px) {
+  .community-content {
+    margin: 16px 12px;
+    padding: var(--space-lg) var(--space-sm);
+  }
   .page-header { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
   .feed-toolbar { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
   .type-tabs { flex-wrap: wrap; }
+}
+</style>
+
+<style>
+body.community-page-open,
+body.community-page-open #app {
+  background: transparent !important;
 }
 </style>
